@@ -8,7 +8,7 @@ class DemoManager : public StateMachine {
   bool start();
 
   private:
-    string message_;
+    const string message_;
     bool printMessage(int n_times);
 
   public:

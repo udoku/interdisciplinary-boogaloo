@@ -17,6 +17,14 @@ namespace Motion {
 /** Initializes publishers/subscribers for motion namespace */
 void init(ros::NodeHandle nh);
 
+/** Handle incoming robot states */
+void handleNewRobotStateMsg(robot_pkg::RobotState msg);
+
+/** Check if mobility has recieved a robot state */
+bool hasCurrentState();
+
+robot_pkg::RobotState getCurrentState();
+
 } // namespace Motion
 
 /** Advanced mobility code (for example, search patterns) */
@@ -55,5 +63,13 @@ namespace Actuators {
 void init(ros::NodeHandle nh);
 
 } // namespace Actuators
+
+namespace System {
+/** Initializes publishers/subscribers for system namespace */
+void init(ros::NodeHandle nh);
+
+/* Command a full system-wide reset */
+void systemWideReset();
+} // namespace System
 
 #endif /** __UTILS__ **/

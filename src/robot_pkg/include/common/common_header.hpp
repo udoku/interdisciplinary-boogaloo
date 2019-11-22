@@ -11,11 +11,12 @@
 
 // Msgs
 #include <robot_pkg/RobotState.h>
+#include <robot_pkg/MotionTarget.h>
+#include <robot_pkg/ServoCommand.h>
 #include <std_msgs/Bool.h>
 
 using namespace Eigen;
 using namespace std;
-//using namespace robot_pkg;
 
 long long getCurrentMsCount();
 

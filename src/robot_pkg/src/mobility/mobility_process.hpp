@@ -10,6 +10,7 @@ class MobilityProcess {
     ros::Subscriber killswitch_sub_;
     ros::Subscriber motion_target_sub_;
     ros::Publisher robot_state_pub_;
+    ros::Publisher servo_command_pub_;
     ros::Timer robot_state_timer_;
 
     robot_pkg::RobotState current_state_;
@@ -20,7 +21,7 @@ class MobilityProcess {
     virtual int run();
 
     void processKillswitch(std_msgs::Bool msg);
-    void handleMotionTarget(std_msgs::Bool msg);
+    void handleMotionTarget(robot_pkg::RobotState msg);
 
     void broadcastState(const ros::TimerEvent& time);
 };

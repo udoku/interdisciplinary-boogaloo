@@ -1,4 +1,6 @@
 Header header
+
+# Whether or not the robot has triggered a software kill
 bool killed
 
 # Position on table, in meters
@@ -19,3 +21,6 @@ float64 roll
 
 # Rate of yaw change, in radians/second
 float64 angular_vel
+
+# Boolean of whether robot is at target (if false, currently moving)
+bool at_target

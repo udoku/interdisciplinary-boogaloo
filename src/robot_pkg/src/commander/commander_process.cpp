@@ -14,6 +14,7 @@ int main(int argc, char* argv[]) {
     Motion::init(nh);
     Actuators::init(nh);
     Vision::init(nh);
+    System::init(nh);
     // Init process and run
     CommanderProcess p(argc > 1 ? string(argv[1]) : "");
     p.run();
@@ -50,44 +51,27 @@ int CommanderProcess::run() {
     sig_int_handler.sa_flags = 0;
     sigaction(SIGINT, &sig_int_handler, NULL);
 
-    // Wait for the hardware process
-    // if (!getenv("IGNORE_HARDWARE")) {
-    //     ROS_INFO("Waiting for current state");
-    //     while (!Motion::currentStateInit()) {
-    //         usleep(100 * 1000);
-    //         ros::spinOnce();
-    //     }
-    // }
-
-    // Wait for the kill switch
-
-    // if (getenv("WAIT_FOR_KILL_SWITCH_REMOVAL") && !getenv("IGNORE_HARDWARE")) {
-    //     ROS_INFO("Waiting for kill switch to be taken OFF");
-    //     while (!Motion::getCurrentState().killed_ && !DRY_RUN) {
-    //         usleep(100 * 1000);
-    //         ros::spinOnce();
-    //     }
-    // }
+    // Wait for the current state to be published
+    ROS_INFO("Waiting for current state");
+    while (!Motion::hasCurrentState()) {
+        ros::Duration(0.1).sleep();
+        ros::spinOnce();
+    }
 
     while (true) {
 
         // Wait for the kill switch
-        // if (!getenv("IGNORE_HARDWARE")) {
-        //     ROS_INFO("Waiting for kill switch to be put ON");
-        //     while (Motion::getCurrentState().killed_ && !DRY_RUN) {
-        //         usleep(100 * 1000);
-        //         ros::spinOnce();
-        //     }
-        // }
+        if (!getenv("IGNORE_HARDWARE")) {
+            ROS_INFO("Kill switch is currently pressed");
+            while (Motion::getCurrentState().killed) {
+                ros::Duration(0.1).sleep();
+                ros::spinOnce();
+            }
+        }
 
         // Give whoever set the kill switch a few seconds to move away
-        // if (getenv("IGNORE_HARDWARE")) {
-        //     ROS_INFO("Ignoring kill switch; starting now");
-        //     usleep(1000 * 1000);
-        // } else {
-        //     ROS_INFO("Kill switch on. Waiting 6 seconds...");
-        //     usleep(6000 * 1000);
-        // }
+        ROS_INFO("Kill switch unlatched. Waiting 6 seconds...");
+        ros::Duration(6).sleep();
 
         // Reset all processes and then start the mission in a separate thread
         ROS_INFO("About to start commander");
@@ -95,15 +79,14 @@ int CommanderProcess::run() {
         pthread_create(&commander_thread_, NULL, CommanderProcess::startTaskManagerSequence,
                        NULL);
         ROS_INFO("Created commander");
+
         // Wait for us to be killed
-        //while (DRY_RUN || !Motion::getCurrentState().killed_ || getenv("IGNORE_HARDWARE")) {
-        while (true) {
-            usleep(100 * 1000);
-            // ROS_INFO("Commander Spin");
+        while (!Motion::getCurrentState().killed || getenv("IGNORE_HARDWARE")) {
+            ros::Duration(0.01).sleep();
             ros::spinOnce();
         }
 
-        ROS_ERROR("Commander noticed that the kill switch was removed.");
+        ROS_ERROR("Commander noticed that the kill switch was pressed.");
 
         // Now we need to kill the task manager that we spawned.
 
@@ -114,7 +97,7 @@ int CommanderProcess::run() {
         pthread_cancel(commander_thread_);
 
         // Tell other processes to stop PID'ing and looking for targets
-        // System::systemWideReset();
+        System::systemWideReset();
 
         // Reset all the tasks
         setupTasks();
@@ -130,14 +113,14 @@ void* CommanderProcess::startTaskManagerSequence(void* arg __attribute__((unused
     ROS_ERROR("Running %s", task_to_run_.c_str());
 
     // Give the diver a moment and get setup for the run
-    // System::systemWideReset();
+    System::systemWideReset();
 
-    usleep(200 * 1000);
+    ros::Duration(0.2).sleep();
 
     // Run main task
     tasks[task_to_run_]->run();
 
-    // System::systemWideReset();
+    System::systemWideReset();
 
     ROS_ERROR("Finished. Exited Task Thread.");
     return 0;

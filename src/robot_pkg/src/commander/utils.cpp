@@ -39,17 +39,35 @@ bool runWithTimeout(function<bool()> code, int timeout, string name) {
 } // namespace Timeout
 
 namespace Motion {
-/** Stores the most recent target state (ie the last target state sent to
- * Mobiltity) */
-// RobotStateCommand g_last_target;
+
+robot_pkg::RobotState g_robot_state;
+bool g_has_robot_state;
 
 /** Ros message passing components */
-//ros::Publisher g_state_command_pub;
-//ros::Subscriber g_robot_state_sub;
+ros::Publisher g_motion_target_pub;
+ros::Subscriber g_robot_state_sub;
 
 void init(ros::NodeHandle nh) {
-//     g_state_command_pub = nh.advertise<crt_system::RobotStateCommandMsg>(ROBOT_STATE_COMMAND_TOPIC, 1000);
-//     g_robot_state_sub = nh.subscribe(ROBOT_STATE_TOPIC, 1000, &handleNewRobotStateMsg);
+    g_motion_target_pub = nh.advertise<robot_pkg::MotionTarget>(MOTION_TARGET_TOPIC, 1000);
+    g_robot_state_sub = nh.subscribe(ROBOT_STATE_TOPIC, 1000, &handleNewRobotStateMsg);
+    g_has_robot_state = false;
+}
+
+void handleNewRobotStateMsg(robot_pkg::RobotState msg) {
+    g_robot_state = msg;
+    g_has_robot_state = true;
+}
+
+bool hasCurrentState() {
+    return g_has_robot_state;
+}
+
+robot_pkg::RobotState getCurrentState() {
+    return g_robot_state;
+}
+
+void moveTo(robot_pkg::MotionTarget msg) {
+    g_motion_target_pub.publish(msg);
 }
 
 
@@ -202,3 +220,33 @@ void init(ros::NodeHandle nh) {
 
 
 } // namespace Actuators
+
+namespace System {
+
+/** ROS message passing components */
+ros::Publisher g_hardware_reset_pub;
+
+void init(ros::NodeHandle nh) {
+    g_hardware_reset_pub = nh.advertise<std_msgs::Bool>(HARDWARE_RESET_TOPIC, 1000);
+}
+
+/** Send out the appropriate messages to reset the states of all other process
+ */
+void systemWideReset() {
+    // Reset mobility by sending a running = false command
+    Motion::moveTo(robot_pkg::MotionTarget());
+
+    // Reset vision process by turning off all detectors
+    // Vision::setDetector(crt_system::Detector::NO_DETECTOR);
+
+    // Reset the pneumatics
+    // Actuators::servoReset();
+
+    // Send command for hardware reset
+    std_msgs::Bool command;
+    command.data = true;
+    g_hardware_reset_pub.publish(command);
+
+    ROS_ERROR("Reset Everything.");
+}
+} // namespace System

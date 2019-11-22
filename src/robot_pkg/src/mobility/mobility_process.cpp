@@ -8,9 +8,10 @@ int main(int argc, char* argv[]) {
 }
 
 MobilityProcess::MobilityProcess() {
-    killswitch_sub_ = nh_.subscribe(KILLSWITCH_TOPIC, 1, &MobilityProcess::processKillswitch, this);
-    motion_target_sub_ = nh_.subscribe(MOTION_TARGET_TOPIC, 1, &MobilityProcess::handleMotionTarget, this);
-    robot_state_pub_ = nh_.advertise<robot_pkg::RobotState>(ROBOT_STATE_TOPIC, 1);
+    killswitch_sub_ = nh_.subscribe(KILLSWITCH_TOPIC, 10, &MobilityProcess::processKillswitch, this);
+    motion_target_sub_ = nh_.subscribe(MOTION_TARGET_TOPIC, 10, &MobilityProcess::handleMotionTarget, this);
+    robot_state_pub_ = nh_.advertise<robot_pkg::RobotState>(ROBOT_STATE_TOPIC, 10);
+    servo_command_pub_ = nh_.advertise<robot_pkg::ServoCommand>(SERVO_COMMAND_TOPIC, 100);
     current_state_.killed = true;
 }
 
@@ -25,7 +26,8 @@ void MobilityProcess::processKillswitch(std_msgs::Bool msg) {
     current_state_.killed = msg.data;
 }
 
-void MobilityProcess::handleMotionTarget(std_msgs::Bool msg) {
+void MobilityProcess::handleMotionTarget(robot_pkg::RobotState msg) {
+    // TODO
 }
 
 void MobilityProcess::broadcastState(const ros::TimerEvent& time) {
