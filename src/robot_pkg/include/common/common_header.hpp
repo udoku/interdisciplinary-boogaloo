@@ -13,7 +13,15 @@
 #include <robot_pkg/RobotState.h>
 #include <robot_pkg/MotionTarget.h>
 #include <robot_pkg/ServoCommand.h>
+#include <robot_pkg/Detector.h>
+#include <robot_pkg/Detection.h>
+#include <robot_pkg/Detections.h>
+#include <robot_pkg/Frame.h>
 #include <std_msgs/Bool.h>
+
+// Srvs
+#include <robot_pkg/RunDetector.h>
+#include <robot_pkg/SetupDetector.h>
 
 using namespace Eigen;
 using namespace std;

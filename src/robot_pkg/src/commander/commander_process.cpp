@@ -5,7 +5,6 @@
 #include "utils.hpp"
 
 int main(int argc, char* argv[]) {
-    // TODO: Make sure arguments to each constructor are correct
     // Init ros
     ros::init(argc, argv, string(COMMAND_PROCESS));
 
@@ -92,8 +91,7 @@ int CommanderProcess::run() {
 
         // Note, this does not garantee an immediate kill. However, the thread will
         // be killed if it ever tries to send a message sleep, or do certain other
-        // system calls. TODO: Is it bad if a thread is killed when it makes the
-        // send() system call from within the message passer?
+        // system calls.
         pthread_cancel(commander_thread_);
 
         // Tell other processes to stop PID'ing and looking for targets

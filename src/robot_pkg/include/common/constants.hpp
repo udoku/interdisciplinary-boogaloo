@@ -15,6 +15,12 @@ const char* const MOTION_TARGET_TOPIC = "motion_target";
 const char* const ROBOT_STATE_TOPIC = "robot_state";
 const char* const SERVO_COMMAND_TOPIC = "servo_command";
 const char* const HARDWARE_RESET_TOPIC = "hardware_reset";
+const char* const DESIRED_DETECTOR_TOPIC = "desired_detector";
+const char* const CAMERA_IMAGES_TOPIC = "images/camera";
+const char* const DETECTION_IMAGE_TOPIC = "images/detected";
+const char* const DETECTIONS_TOPIC = "detections";
+const char* const DETECTOR_SETUP_TOPIC = "detector_setup";
+const char* const DETECTOR_RUN_TOPIC = "detector_run";
 
 /** UPDATE RATES */
 const double ROBOT_STATE_UPDATE_RATE_HZ = 10;

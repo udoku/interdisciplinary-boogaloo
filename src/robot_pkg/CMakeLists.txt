@@ -57,13 +57,18 @@ add_message_files(
   RobotState.msg
   MotionTarget.msg
   ServoCommand.msg
+  Detector.msg
+  Frame.msg
+  Detection.msg
+  Detections.msg
 )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   RunDetector.srv
-# )
+add_service_files(
+  FILES
+  RunDetector.srv
+  SetupDetector.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(

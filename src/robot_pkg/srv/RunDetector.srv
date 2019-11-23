@@ -1,0 +1,6 @@
+Frame frame
+Detector detector
+---
+bool success
+sensor_msgs/Image feedback
+Detections detections
