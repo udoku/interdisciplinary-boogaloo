@@ -1,0 +1,4 @@
+<launch>
+<node name="mobility" pkg="robot_pkg" type="mobility_node" output="screen">
+</node>
+</launch>

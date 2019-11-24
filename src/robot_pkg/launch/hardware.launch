@@ -1,0 +1,5 @@
+<launch>
+
+<node name="hardware" pkg="robot_pkg" type="hardware_node" output="screen">
+</node>
+</launch>

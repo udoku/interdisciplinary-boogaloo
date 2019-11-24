@@ -1,0 +1,25 @@
+<launch>
+
+    <arg name="RECORD" />
+    <arg name="LOG_FILE" />
+    <node pkg="rosbag" type="record" name="rosbag_record"
+      args="record --lz4 -O $(arg LOG_FILE) /robot_state /hardware_reset /motion_target /servo_command /detections /images/camera"
+      if="$(arg RECORD)">
+    </node>
+
+    <node name="vision" pkg="robot_pkg"
+      type="vision_node" output="screen">
+    </node>
+
+    <node name="image_compressor_camera" type="republish" pkg="image_transport"
+        args="raw in:=/images/camera compressed out:=/images/camera">
+    </node>
+
+    <node name="image_compressor_detected" type="republish" pkg="image_transport"
+        args="raw in:=/images/detected compressed out:=/images/detected">
+    </node>
+
+    <node name="detectors" pkg="robot_pkg"
+            type="detector_server.py" output="screen">
+    </node>
+</launch>
