@@ -240,7 +240,7 @@ target_link_libraries(${PROJECT_NAME}_hardware
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 install(PROGRAMS
-  src/vision/scripts/python_detector_server.py
+  src/vision/detector_server.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

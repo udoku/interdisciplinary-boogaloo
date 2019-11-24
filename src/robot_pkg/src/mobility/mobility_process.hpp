@@ -21,7 +21,7 @@ class MobilityProcess {
     virtual int run();
 
     void processKillswitch(std_msgs::Bool msg);
-    void handleMotionTarget(robot_pkg::RobotState msg);
+    void handleMotionTarget(robot_pkg::MotionTarget msg);
 
     void broadcastState(const ros::TimerEvent& time);
 };

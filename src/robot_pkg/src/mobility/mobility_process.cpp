@@ -19,6 +19,7 @@ MobilityProcess::~MobilityProcess() {}
 
 int MobilityProcess::run() {
     robot_state_timer_ = nh_.createTimer(ros::Duration(1.0 / ROBOT_STATE_UPDATE_RATE_HZ), &MobilityProcess::broadcastState, this);
+    ROS_INFO("Mobility set up");
     ros::spin();
 }
 
@@ -26,7 +27,7 @@ void MobilityProcess::processKillswitch(std_msgs::Bool msg) {
     current_state_.killed = msg.data;
 }
 
-void MobilityProcess::handleMotionTarget(robot_pkg::RobotState msg) {
+void MobilityProcess::handleMotionTarget(robot_pkg::MotionTarget msg) {
     // TODO
 }
 

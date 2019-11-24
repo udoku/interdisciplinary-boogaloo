@@ -1,0 +1,5 @@
+<launch>
+<arg name="commander_name" />
+<node name="commander" pkg="robot_pkg" type="commander_node" output="screen" args="$(arg commander_name)">
+</node>
+</launch>

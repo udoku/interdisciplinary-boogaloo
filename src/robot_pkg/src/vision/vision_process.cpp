@@ -17,9 +17,11 @@ VisionProcess::VisionProcess() {
     current_detector_.detector_type = robot_pkg::Detector::NO_DETECTOR;
     new_detector_ = current_detector_;
 }
+
 VisionProcess::~VisionProcess() {}
 
 int VisionProcess::run() {
+    ROS_INFO("Vision setup. Waiting for frames");
     while (!current_frame_.valid) {
         ros::spinOnce();
         ros::Duration(0.5).sleep();
