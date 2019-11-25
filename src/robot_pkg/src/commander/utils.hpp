@@ -62,6 +62,9 @@ namespace Actuators {
 /** Initializes publishers/subscribers for actuators namespace */
 void init(ros::NodeHandle nh);
 
+/** Command mobility to drop a tic tac box */
+void drop();
+
 } // namespace Actuators
 
 namespace System {
