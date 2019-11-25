@@ -25,6 +25,8 @@ bool hasCurrentState();
 
 robot_pkg::RobotState getCurrentState();
 
+void moveTo(robot_pkg::MotionTarget msg);
+
 } // namespace Motion
 
 /** Advanced mobility code (for example, search patterns) */
