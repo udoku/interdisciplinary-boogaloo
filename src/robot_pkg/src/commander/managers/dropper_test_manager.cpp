@@ -1,6 +1,6 @@
 #include "dropper_test_manager.hpp"
 
-DropperTestManager::DropperTestManager() : {}
+DropperTestManager::DropperTestManager() {}
 
 string DropperTestManager::getName() { return "Dropper Test"; }
 
@@ -13,7 +13,6 @@ bool DropperTestManager::start() {
 bool DropperTestManager::dropTicTac(int n_times) {
     if (n_times > 0) {
         Actuators::drop();
-        ros::Duration(delay).sleep();
         return call(bind(&DropperTestManager::dropTicTac, this, n_times - 1));
     }
     else {

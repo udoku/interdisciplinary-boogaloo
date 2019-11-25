@@ -10,10 +10,12 @@
 #include "task_seq.hpp"
 
 #include "managers/demo_manager.hpp"
+#include "managers/dropper_test_manager.hpp"
 
 map<string, TaskPtr> tasks;
 
 void setupTasks() {
     tasks["demo"] = TaskPtr(new DemoManager());
+    tasks["drop"] = TaskPtr(new DropperTestManager());
 }
 #endif
