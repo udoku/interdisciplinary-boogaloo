@@ -3,17 +3,40 @@
 
 #include "common/common_header.hpp"
 
-
 class MobilityProcess {
   private:
+
+    enum WheelMode {STRAIGHT, STRAFE, TURNING, TRANSITIONING, UNKNOWN};
+    enum MoveMode {TURNING_TO_POS, MOVING, TURNING_TO_ANGLE, DONE};
+
     ros::NodeHandle nh_;
     ros::Subscriber killswitch_sub_;
     ros::Subscriber motion_target_sub_;
+    ros::Subscriber system_reset_sub_;
     ros::Publisher robot_state_pub_;
     ros::Publisher servo_command_pub_;
-    ros::Timer robot_state_timer_;
+    ros::Timer mobility_update_timer_;
 
     robot_pkg::RobotState current_state_;
+    robot_pkg::MotionTarget current_target_;
+
+    MoveMode move_mode_;
+    WheelMode wheel_mode_;
+    ros::Time last_transition_time_;
+    double dist_to_travel_;
+    double straight_vel_;
+
+    double angleToTargetPos();
+    double angleToTargetAngle();
+
+    double distToTarget();
+
+    void setWheelMode(WheelMode mode);
+    void sendWheelAngles(WheelMode mode);
+
+    void stopMoving();
+    void turnToAngle(double angle);
+    void moveStraight(double dir);
 
   public:
     MobilityProcess();
@@ -22,8 +45,9 @@ class MobilityProcess {
 
     void processKillswitch(std_msgs::Bool msg);
     void handleMotionTarget(robot_pkg::MotionTarget msg);
+    void handleSystemReset(std_msgs::Bool msg);
 
-    void broadcastState(const ros::TimerEvent& time);
+    void updateMobility(const ros::TimerEvent& time);
 };
 
 #endif /** #ifndef __MOBILITY_PROCESS__ **/
