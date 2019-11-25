@@ -33,6 +33,7 @@ int MobilityProcess::run() {
     mobility_update_timer_ = nh_.createTimer(ros::Duration(1.0 / MOBILITY_UPDATE_RATE_HZ), &MobilityProcess::updateMobility, this);
     ROS_INFO("Mobility set up");
     ros::spin();
+    return 0;
 }
 
 void MobilityProcess::processKillswitch(std_msgs::Bool msg) {

@@ -35,4 +35,5 @@ int HardwareProcess::run() {
     
     ROS_INFO("Hardware set up");
     ros::spin();
+    return 0;
 }
