@@ -52,7 +52,7 @@ void MobilityProcess::handleMotionTarget(robot_pkg::MotionTarget msg) {
         dist_to_travel_ = distToTarget();
     }
     // If just angle has changed and we are already at the target, just make it yaw
-    else if (current_target_.yaw != current_target_.yaw && move_mode_ == MoveMode::DONE) {
+    else if (current_target_.yaw != msg.yaw && move_mode_ == MoveMode::DONE) {
         current_state_.at_target = false;
         move_mode_ = MoveMode::TURNING_TO_ANGLE;
     }
