@@ -31,7 +31,7 @@ void HardwareProcess::readKillswitch(const ros::TimerEvent& time) {
 }
 
 int HardwareProcess::run() {
-    killswitch_timer_ = nh_.createTimer(ros::Duration(1.0 / ROBOT_STATE_UPDATE_RATE_HZ), &HardwareProcess::readKillswitch, this);
+    killswitch_timer_ = nh_.createTimer(ros::Duration(1.0 / MOBILITY_UPDATE_RATE_HZ), &HardwareProcess::readKillswitch, this);
     
     ROS_INFO("Hardware set up");
     ros::spin();

@@ -215,9 +215,20 @@ void init(ros::NodeHandle nh) {
 
 namespace Actuators {
 
+/** ROS message passing components */
+ros::Publisher g_tic_tac_drop_pub;
+
 void init(ros::NodeHandle nh) {
+    g_tic_tac_drop_pub = nh.advertise<std_msgs::Bool>(TIC_TAC_DROP_TOPIC, 5);
 }
 
+void drop() {
+    std_msgs::Bool command;
+    command.data = true;
+    g_tic_tac_drop_pub.publish(command);
+
+    ROS_INFO("Dropping Tic Tac Box");
+}
 
 } // namespace Actuators
 
