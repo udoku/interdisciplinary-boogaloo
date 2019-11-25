@@ -16,6 +16,7 @@ bool DropperTestManager::dropTicTac(int n_times) {
         return call(bind(&DropperTestManager::dropTicTac, this, n_times - 1));
     }
     else {
+        ros::Duration(10.0).sleep();  // Give Mobility time to actually drop
         return done(true);
     }
 }
