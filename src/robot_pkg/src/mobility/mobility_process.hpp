@@ -13,6 +13,7 @@ class MobilityProcess {
     ros::Subscriber killswitch_sub_;
     ros::Subscriber motion_target_sub_;
     ros::Subscriber system_reset_sub_;
+    ros::Subscriber dropper_sub_;
     ros::Publisher robot_state_pub_;
     ros::Publisher servo_command_pub_;
     ros::Timer mobility_update_timer_;
@@ -26,6 +27,10 @@ class MobilityProcess {
     double dist_to_travel_;
     double straight_vel_;
 
+    ros::Time last_drop_time_;
+    int current_drop_;
+    int requested_drop_;
+
     double angleToTargetPos();
     double angleToTargetAngle();
 
@@ -38,6 +43,8 @@ class MobilityProcess {
     void turnToAngle(double angle);
     void moveStraight(double dir);
 
+    void setDropper(int index);
+
   public:
     MobilityProcess();
     ~MobilityProcess();
@@ -46,6 +53,7 @@ class MobilityProcess {
     void processKillswitch(std_msgs::Bool msg);
     void handleMotionTarget(robot_pkg::MotionTarget msg);
     void handleSystemReset(std_msgs::Bool msg);
+    void handleDropCommand(std_msgs::Bool msg);
 
     void updateMobility(const ros::TimerEvent& time);
 };

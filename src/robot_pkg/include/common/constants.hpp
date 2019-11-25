@@ -37,9 +37,11 @@ const double SPEED_TO_POWER = 0.5; // multiply by speed to get servo power
 const double TURN_TO_SPEED = 0.1; // multiply by rad/s to get necessary m/s of wheels
 
 const double TRANSITION_WAIT_TIME = 1.0; // seconds
+const double DROP_WAIT_TIME = 1.0; // seconds
 
 const int WHEEL_IDS[3] = {0, 1, 2};
 const int PIVOT_IDS[3] = {3, 4, 5};
+const int DROPPER_ID = 6;
 
 const double TURNING_SETPOINTS[3] = {0.0, 0.0, 0.0};
 const double STRAIGHT_SETPOINTS[3] = {0.0, 0.0, 0.0};
@@ -47,6 +49,9 @@ const double STRAFE_SETPOINTS[3] = {0.0, 0.0, 0.0};
 
 const double STRAIGHT_DIRECTIONS[3] = {1, 1, 1};
 const double TURN_DIRECTIONS[3] = {1, 1, 1};
+
+const int MAX_TIC_TAC_DROPS = 4;
+const double DROP_SETPOINTS[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
 
 extern const int DUMMY_CONST;
 

@@ -11,7 +11,8 @@ MobilityProcess::MobilityProcess() {
     killswitch_sub_ = nh_.subscribe(KILLSWITCH_TOPIC, 10, &MobilityProcess::processKillswitch, this);
     motion_target_sub_ = nh_.subscribe(MOTION_TARGET_TOPIC, 1, &MobilityProcess::handleMotionTarget, this);
     system_reset_sub_ = nh_.subscribe(HARDWARE_RESET_TOPIC, 10, &MobilityProcess::handleSystemReset, this);
-    
+    dropper_sub_ = nh_.subscribe(TIC_TAC_DROP_TOPIC, 10, &MobilityProcess::handleDropCommand, this);
+
     robot_state_pub_ = nh_.advertise<robot_pkg::RobotState>(ROBOT_STATE_TOPIC, 10);
     servo_command_pub_ = nh_.advertise<robot_pkg::ServoCommand>(SERVO_COMMAND_TOPIC, 100);
 
@@ -21,6 +22,9 @@ MobilityProcess::MobilityProcess() {
     last_transition_time_ = ros::Time::now();
     dist_to_travel_ = 0;
     straight_vel_ = 0;
+    last_drop_time_ = ros::Time::now();
+    current_drop_ = 0;
+    requested_drop_ = 0;
 }
 
 MobilityProcess::~MobilityProcess() {}
@@ -69,9 +73,16 @@ void MobilityProcess::handleSystemReset(std_msgs::Bool msg) {
         // We have no target currently
         move_mode_ = MoveMode::DONE;
 
-        // Zero out distance and velocity
+        // Zero out wheel attributes
+        wheel_mode_ = WheelMode::UNKNOWN;
+        last_transition_time_ = ros::Time::now();
         dist_to_travel_ = 0;
         straight_vel_ = 0;
+
+        // Zero out dropper state
+        last_drop_time_ = ros::Time::now();
+        current_drop_ = 0;
+        requested_drop_ = 0;
 
         // Zero out current state
         current_state_.pos_x = 0;
@@ -87,6 +98,12 @@ void MobilityProcess::handleSystemReset(std_msgs::Bool msg) {
     }
 }
 
+void MobilityProcess::handleDropCommand(std_msgs::Bool msg) {
+    if (msg.data && requested_drop_ < MAX_TIC_TAC_DROPS) {
+        requested_drop_++;
+    }
+}
+
 void MobilityProcess::updateMobility(const ros::TimerEvent& time) {
     // If killed, don't do anything besides publish
     if (current_state_.killed) {
@@ -94,6 +111,16 @@ void MobilityProcess::updateMobility(const ros::TimerEvent& time) {
         robot_state_pub_.publish(current_state_);
         return;
     }
+
+    // Handle tic tac drop
+    if (requested_drop_ > current_drop_ &&
+        (ros::Time::now() - last_drop_time_).toSec() > DROP_WAIT_TIME) {
+        
+        current_drop_++;
+        last_drop_time_ = ros::Time::now();
+        ROS_INFO("Dropping tic tac %d", current_drop_);
+    }
+    setDropper(current_drop_);
     
     // Turn towards target
     if (move_mode_ == MoveMode::TURNING_TO_POS) {
@@ -283,4 +310,11 @@ void MobilityProcess::moveStraight(double dir) {
     current_state_.vel_x = MAX_SPEED * cos(current_state_.yaw);
     current_state_.vel_y = MAX_SPEED * sin(current_state_.yaw);
     straight_vel_ = MAX_SPEED;
+}
+
+void MobilityProcess::setDropper(int index) {
+    robot_pkg::ServoCommand cmd;
+    cmd.servo_id = DROPPER_ID;
+    cmd.value = DROP_SETPOINTS[index];
+    servo_command_pub_.publish(cmd);
 }
