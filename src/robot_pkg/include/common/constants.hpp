@@ -14,6 +14,7 @@ const char* const KILLSWITCH_TOPIC = "killswitch";
 const char* const MOTION_TARGET_TOPIC = "motion_target";
 const char* const ROBOT_STATE_TOPIC = "robot_state";
 const char* const SERVO_COMMAND_TOPIC = "servo_command";
+const char* const TIC_TAC_DROP_TOPIC = "drop_tic_tac";
 const char* const HARDWARE_RESET_TOPIC = "hardware_reset";
 const char* const DESIRED_DETECTOR_TOPIC = "desired_detector";
 const char* const CAMERA_IMAGES_TOPIC = "images/camera";
