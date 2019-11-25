@@ -170,6 +170,7 @@ add_executable(${PROJECT_NAME}_commander
 	src/commander/lambda_task.hpp src/commander/lambda_task.cpp
 
   src/commander/managers/demo_manager.hpp src/commander/managers/demo_manager.cpp
+  src/commander/managers/dropper_test_manager.hpp src/commander/managers/dropper_test_manager.cpp
   
 	src/commander/task_manager_base.hpp src/commander/task_manager_base.cpp
 	src/commander/task_seq.hpp src/commander/task_seq.cpp
