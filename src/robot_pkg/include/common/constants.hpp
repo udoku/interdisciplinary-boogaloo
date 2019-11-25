@@ -53,6 +53,8 @@ const double TURN_DIRECTIONS[3] = {1, 1, 1};
 const int MAX_TIC_TAC_DROPS = 4;
 const double DROP_SETPOINTS[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
 
+const double SERVO_COMMAND_ZERO = 90;
+
 extern const int DUMMY_CONST;
 
 #endif

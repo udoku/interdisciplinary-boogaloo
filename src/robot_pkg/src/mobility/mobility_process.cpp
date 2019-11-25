@@ -271,6 +271,7 @@ void MobilityProcess::sendWheelAngles(WheelMode mode) {
             cmd.value = STRAFE_SETPOINTS[i];
             break;
         }
+        cmd.value += SERVO_COMMAND_ZERO;
         servo_command_pub_.publish(cmd);
     }
 }
@@ -279,7 +280,7 @@ void MobilityProcess::stopMoving() {
     for (int i = 0; i < 3; i++) {
         robot_pkg::ServoCommand cmd;
         cmd.servo_id = WHEEL_IDS[i];
-        cmd.value = 0;
+        cmd.value = SERVO_COMMAND_ZERO;
         servo_command_pub_.publish(cmd);
     }
     current_state_.vel_x = 0;
@@ -295,6 +296,7 @@ void MobilityProcess::turnToAngle(double angle) {
         robot_pkg::ServoCommand cmd;
         cmd.servo_id = WHEEL_IDS[i];
         cmd.value = MAX_TURN_SPEED  * TURN_TO_SPEED * SPEED_TO_POWER * TURN_DIRECTIONS[i] * direction;
+        cmd.value += SERVO_COMMAND_ZERO;
         servo_command_pub_.publish(cmd);
     }
     current_state_.angular_vel = direction * MAX_TURN_SPEED;
@@ -306,6 +308,7 @@ void MobilityProcess::moveStraight(double dir) {
         robot_pkg::ServoCommand cmd;
         cmd.servo_id = WHEEL_IDS[i];
         cmd.value = MAX_SPEED * SPEED_TO_POWER * STRAIGHT_DIRECTIONS[i];
+        cmd.value += SERVO_COMMAND_ZERO;
         servo_command_pub_.publish(cmd);
     }
     current_state_.vel_x = MAX_SPEED * cos(current_state_.yaw);
@@ -317,5 +320,6 @@ void MobilityProcess::setDropper(int index) {
     robot_pkg::ServoCommand cmd;
     cmd.servo_id = DROPPER_ID;
     cmd.value = DROP_SETPOINTS[index];
+    cmd.value += SERVO_COMMAND_ZERO;
     servo_command_pub_.publish(cmd);
 }
