@@ -74,7 +74,6 @@ void MobilityProcess::handleSystemReset(std_msgs::Bool msg) {
         straight_vel_ = 0;
 
         // Zero out current state
-        current_state_.killed = true;
         current_state_.pos_x = 0;
         current_state_.pos_y = 0;
         current_state_.vel_x = 0;
