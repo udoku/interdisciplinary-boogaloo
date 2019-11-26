@@ -23,6 +23,7 @@ int main(int argc, char* argv[]) {
 // Ensure that a system-wide reset is sent if this process is killed
 void sigHandler(int s __attribute__((unused))) {
     System::setLedDisabled();
+    System::systemWideReset();
     exit(0);
 }
 
