@@ -17,6 +17,7 @@
 #include <robot_pkg/Detection.h>
 #include <robot_pkg/Detections.h>
 #include <robot_pkg/Frame.h>
+#include <robot_pkg/UltrasonicPing.h>
 #include <std_msgs/Bool.h>
 
 // Srvs

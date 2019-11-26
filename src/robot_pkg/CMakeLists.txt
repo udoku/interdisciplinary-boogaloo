@@ -61,6 +61,7 @@ add_message_files(
   Frame.msg
   Detection.msg
   Detections.msg
+  UltrasonicPing.msg
 )
 
 ## Generate services in the 'srv' folder
