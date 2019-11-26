@@ -7,4 +7,8 @@
 <param name="port" type="string" value="/dev/ttyACM0"/>
 </node>
 
+<node name="arduino_2" pkg="rosserial_arduino" type="serial_node.py">
+<param name="port" type="string" value="/dev/ttyACM1"/>
+</node>
+
 </launch>
