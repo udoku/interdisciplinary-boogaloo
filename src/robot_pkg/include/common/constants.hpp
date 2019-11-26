@@ -22,6 +22,7 @@ const char* const DETECTION_IMAGE_TOPIC = "images/detected";
 const char* const DETECTIONS_TOPIC = "detections";
 const char* const DETECTOR_SETUP_TOPIC = "detector_setup";
 const char* const DETECTOR_RUN_TOPIC = "detector_run";
+const char* const LED_COMMAND_TOPIC = "led_command";
 
 /** UPDATE RATES */
 const double MOBILITY_UPDATE_RATE_HZ = 100;

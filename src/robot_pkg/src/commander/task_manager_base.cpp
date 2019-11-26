@@ -13,6 +13,7 @@ bool StateMachine::call(function<bool()> f) {
 }
 
 bool StateMachine::done(bool status) {
+    System::setLedComplete();
     next_call_ = nullptr;
     return status;
 }

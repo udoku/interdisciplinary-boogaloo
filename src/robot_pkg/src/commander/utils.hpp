@@ -73,6 +73,15 @@ namespace System {
 /** Initializes publishers/subscribers for system namespace */
 void init(ros::NodeHandle nh);
 
+/** Command the safety LEDs to display a disabled state */
+void setLedDisabled();
+
+/** Command the safety LEDs to display a armed state */
+void setLedArmed();
+
+/** Command the safety LEDs to display a complete state */
+void setLedComplete();
+
 /* Command a full system-wide reset */
 void systemWideReset();
 } // namespace System

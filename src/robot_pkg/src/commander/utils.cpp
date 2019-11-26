@@ -236,9 +236,32 @@ namespace System {
 
 /** ROS message passing components */
 ros::Publisher g_hardware_reset_pub;
+ros::Publisher g_led_command_pub;
 
 void init(ros::NodeHandle nh) {
     g_hardware_reset_pub = nh.advertise<std_msgs::Bool>(HARDWARE_RESET_TOPIC, 1000);
+    g_led_command_pub = nh.advertise<robot_pkg::LedCommand>(LED_COMMAND_TOPIC, 1000);
+}
+
+void setLedDisabled() {
+    robot_pkg::LedCommand led;
+    led.state = robot_pkg::LedCommand::DISABLED;
+    g_led_command_pub.publish(led);
+    ROS_ERROR("Set safety LED to disabled");
+}
+
+void setLedArmed() {
+    robot_pkg::LedCommand led;
+    led.state = robot_pkg::LedCommand::ARMED;
+    g_led_command_pub.publish(led);
+    ROS_ERROR("Set safety LED to armed");
+}
+
+void setLedComplete() {
+    robot_pkg::LedCommand led;
+    led.state = robot_pkg::LedCommand::DISABLED_COMPLETE;
+    g_led_command_pub.publish(led);
+    ROS_ERROR("Set safety LED to complete");
 }
 
 /** Send out the appropriate messages to reset the states of all other process

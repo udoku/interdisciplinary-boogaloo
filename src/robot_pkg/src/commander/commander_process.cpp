@@ -22,6 +22,7 @@ int main(int argc, char* argv[]) {
 
 // Ensure that a system-wide reset is sent if this process is killed
 void sigHandler(int s __attribute__((unused))) {
+    System::setLedDisabled();
     exit(0);
 }
 
@@ -59,6 +60,8 @@ int CommanderProcess::run() {
 
     while (true) {
 
+        System::setLedDisabled();
+
         // Wait for the kill switch
         if (!getenv("IGNORE_HARDWARE")) {
             ROS_INFO("Kill switch is currently pressed");
@@ -67,6 +70,8 @@ int CommanderProcess::run() {
                 ros::spinOnce();
             }
         }
+
+        System::setLedArmed();
 
         // Give whoever set the kill switch a few seconds to move away
         ROS_INFO("Kill switch unlatched. Waiting 6 seconds...");
@@ -84,6 +89,8 @@ int CommanderProcess::run() {
             ros::Duration(0.01).sleep();
             ros::spinOnce();
         }
+
+        System::setLedDisabled();
 
         ROS_ERROR("Commander noticed that the kill switch was pressed.");
 
