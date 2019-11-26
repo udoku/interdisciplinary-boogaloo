@@ -40,9 +40,9 @@ void MobilityProcess::processKillswitch(std_msgs::Bool msg) {
     // Set killed
     current_state_.killed = msg.data;
     // Fast track to stop robot if killed
-    if (current_state_.killed) {
-        handleSystemReset(msg);
-    }
+    // if (current_state_.killed) {
+    //    handleSystemReset(msg);
+    // }
 }
 
 void MobilityProcess::handleMotionTarget(robot_pkg::MotionTarget msg) {
