@@ -2,26 +2,23 @@
 #include <ros.h>
 #include <robot_pkg/ServoCommand.h>
 #include <robot_pkg/LedCommand.h>
-#include <std_msgs/Bool.h>
 
 #include <Servo.h>
 
 #define DISABLE_LED 1
 #define ARMED_LED 2
 #define COMPLETE_LED 3
-#define KILL_PIN 4
+
+#define NUM_SERVOS 7
 
 ros::NodeHandle nh;
 int led_state;
-std_msgs::Bool kill_msg;
 
-ros::Publisher killswitch_pub("killswitch", &kill_msg);
-
-Servo servos[6];
+Servo servos[NUM_SERVOS];
 
 // Pass servo commands
 void servo_callback(const robot_pkg::ServoCommand msg){
-  if (0 <= msg.servo_id && msg.servo_id < 6) {
+  if (0 <= msg.servo_id && msg.servo_id < NUM_SERVOS) {
     servos[msg.servo_id].write(msg.value);
   }
 }
@@ -59,12 +56,6 @@ void led_update() {
   }
 }
 
-// Update killswitch
-void kill_update() {
-  kill_msg.data = digitalRead(KILL_PIN);
-  killswitch_pub.publish(&kill_msg);
-}
-
 void setup() {
   // put your setup code here, to run once:
   nh.initNode(); 
@@ -76,21 +67,19 @@ void setup() {
   servos[3].attach(8);
   servos[4].attach(9);
   servos[5].attach(10);
+  servos[6].attach(11);
 
   led_state = robot_pkg::LedCommand::DISABLED;
 
   pinMode(DISABLE_LED, OUTPUT);
   pinMode(ARMED_LED, OUTPUT);
   pinMode(COMPLETE_LED, OUTPUT);
-  pinMode(KILL_PIN, INPUT);
   
   nh.subscribe(servo_sub);
   nh.subscribe(led_sub);
-  nh.advertise(killswitch_pub);
 }
 
 void loop() {
   nh.spinOnce();
   led_update();
-  kill_update();
 }

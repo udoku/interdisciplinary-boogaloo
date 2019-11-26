@@ -1,12 +1,11 @@
 #include <ArduinoHardware.h>
 #include <ros.h>
-#include <robot_pkg/ServoCommand.h>
+#include <std_msgs/Bool.h>
 #include <robot_pkg/UltrasonicPing.h>
-
-#include <Servo.h>
 
 #define NUM_SENSORS 6
 
+#define KILL_PIN 4
 #define ECHO_PIN 7
 #define SERVO_PIN 8
 
@@ -16,19 +15,14 @@
 const int sensor_pins[NUM_SENSORS] = {1, 2, 3, 4, 5, 6};
 
 ros::NodeHandle nh;
+
 robot_pkg::UltrasonicPing ping_msg;
+std_msgs::Bool kill_msg;
+
 int active_sensor;
 
-Servo servo;
 
-// Pass servo commands
-void servo_callback(const robot_pkg::ServoCommand msg){
-  if (msg.servo_id == 7) {
-    servo.write(msg.value);
-  }
-}
-
-ros::Subscriber<robot_pkg::ServoCommand> servo_sub("servo_command", servo_callback);
+ros::Publisher killswitch_pub("killswitch", &kill_msg);
 ros::Publisher ping_pub("ultrasonic_ping", &ping_msg);
 
 void read_sensor() {
@@ -50,25 +44,30 @@ void read_sensor() {
   active_sensor = (active_sensor + 1) % NUM_SENSORS;
 }
 
+// Update killswitch
+void kill_update() {
+  kill_msg.data = digitalRead(KILL_PIN);
+  killswitch_pub.publish(&kill_msg);
+}
+
 void setup() {
   // put your setup code here, to run once:
   nh.initNode(); 
-
-  // TODO: setup pins
-  servo.attach(SERVO_PIN);
 
   for (int i = 0; i < NUM_SENSORS; i++) {
     pinMode(sensor_pins[i], OUTPUT);
   }
   pinMode(ECHO_PIN, INPUT);
+  pinMode(KILL_PIN, INPUT);
 
   active_sensor = 0;
   
-  nh.subscribe(servo_sub);
   nh.advertise(ping_pub);
+  nh.advertise(killswitch_pub);
 }
 
 void loop() {
   nh.spinOnce();
   read_sensor();
+  kill_update();
 }
