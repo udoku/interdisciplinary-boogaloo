@@ -12,6 +12,7 @@
 #include "managers/demo_manager.hpp"
 #include "managers/dropper_test_manager.hpp"
 #include "managers/move_test_manager.hpp"
+#include "managers/ultrasonic_test_manager.hpp"
 
 map<string, TaskPtr> tasks;
 
@@ -19,5 +20,6 @@ void setupTasks() {
     tasks["demo"] = TaskPtr(new DemoManager());
     tasks["drop"] = TaskPtr(new DropperTestManager());
     tasks["move"] = TaskPtr(new MoveTestManager());
+    tasks["ultrasonic"] = TaskPtr(new UltrasonicTestManager());
 }
 #endif

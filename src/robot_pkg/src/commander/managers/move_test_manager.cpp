@@ -5,11 +5,11 @@ MoveTestManager::MoveTestManager() {}
 string MoveTestManager::getName() { return "Move Test"; }
 
 bool MoveTestManager::start() {
-    ROS_INFO("Starting dropper test");
+    ROS_INFO("Starting movement test");
     return call(bind(&MoveTestManager::testMove, this));
 }
 
-// Move ti a point
+// Move to a point
 bool MoveTestManager::testMove() {
     robot_pkg::MotionTarget target;
     target.pos_x = 1;

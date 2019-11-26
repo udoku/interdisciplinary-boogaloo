@@ -174,7 +174,8 @@ add_executable(${PROJECT_NAME}_commander
   src/commander/managers/demo_manager.hpp src/commander/managers/demo_manager.cpp
   src/commander/managers/dropper_test_manager.hpp src/commander/managers/dropper_test_manager.cpp
   src/commander/managers/move_test_manager.hpp src/commander/managers/move_test_manager.cpp
-  
+  src/commander/managers/ultrasonic_test_manager.hpp src/commander/managers/ultrasonic_test_manager.cpp
+
 	src/commander/task_manager_base.hpp src/commander/task_manager_base.cpp
 	src/commander/task_seq.hpp src/commander/task_seq.cpp
 	src/commander/utils.hpp src/commander/utils.cpp

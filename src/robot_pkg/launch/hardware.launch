@@ -2,4 +2,9 @@
 
 <node name="hardware" pkg="robot_pkg" type="hardware_node" output="screen">
 </node>
+
+<node name="arduino_1" pkg="rosserial_arduino" type="serial_node.py">
+<param name="port" type="string" value="/dev/ttyACM0"/>
+</node>
+
 </launch>

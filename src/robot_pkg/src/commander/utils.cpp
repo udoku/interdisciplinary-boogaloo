@@ -237,10 +237,37 @@ namespace System {
 /** ROS message passing components */
 ros::Publisher g_hardware_reset_pub;
 ros::Publisher g_led_command_pub;
+ros::Subscriber g_ultrasonic_sub;
+Ultrasonics g_ultrasonic_data;
+void updateUltrasonic(robot_pkg::UltrasonicPing msg);
 
 void init(ros::NodeHandle nh) {
     g_hardware_reset_pub = nh.advertise<std_msgs::Bool>(HARDWARE_RESET_TOPIC, 1000);
     g_led_command_pub = nh.advertise<robot_pkg::LedCommand>(LED_COMMAND_TOPIC, 1000);
+    g_ultrasonic_sub = nh.subscribe(ULTRASONIC_PING_TOPIC, 12, &updateUltrasonic);
+}
+
+void updateUltrasonic(robot_pkg::UltrasonicPing msg) {
+    switch (msg.sensor_id){
+        case robot_pkg::UltrasonicPing::FRONT_LEFT:
+        g_ultrasonic_data.front_left = msg.distance;
+        break;
+        case robot_pkg::UltrasonicPing::FRONT_RIGHT:
+        g_ultrasonic_data.front_right = msg.distance;
+        break;
+        case robot_pkg::UltrasonicPing::LEFT:
+        g_ultrasonic_data.left = msg.distance;
+        break;
+        case robot_pkg::UltrasonicPing::RIGHT:
+        g_ultrasonic_data.right = msg.distance;
+        break;
+        case robot_pkg::UltrasonicPing::BACK_LEFT:
+        g_ultrasonic_data.back_left = msg.distance;
+        break;
+        case robot_pkg::UltrasonicPing::BACK_RIGHT:
+        g_ultrasonic_data.back_right = msg.distance;
+        break;
+    }
 }
 
 void setLedDisabled() {
@@ -262,6 +289,10 @@ void setLedComplete() {
     led.state = robot_pkg::LedCommand::DISABLED_COMPLETE;
     g_led_command_pub.publish(led);
     ROS_ERROR("Set safety LED to complete");
+}
+
+Ultrasonics getUltrasonicData() {
+    return g_ultrasonic_data;
 }
 
 /** Send out the appropriate messages to reset the states of all other process

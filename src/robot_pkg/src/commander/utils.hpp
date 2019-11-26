@@ -82,6 +82,9 @@ void setLedArmed();
 /** Command the safety LEDs to display a complete state */
 void setLedComplete();
 
+/** Get the current ultrasonic data */
+Ultrasonics getUltrasonicData();
+
 /* Command a full system-wide reset */
 void systemWideReset();
 } // namespace System

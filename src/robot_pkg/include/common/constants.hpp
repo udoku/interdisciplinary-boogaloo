@@ -23,6 +23,7 @@ const char* const DETECTIONS_TOPIC = "detections";
 const char* const DETECTOR_SETUP_TOPIC = "detector_setup";
 const char* const DETECTOR_RUN_TOPIC = "detector_run";
 const char* const LED_COMMAND_TOPIC = "led_command";
+const char* const ULTRASONIC_PING_TOPIC = "ultrasonic_ping";
 
 /** UPDATE RATES */
 const double MOBILITY_UPDATE_RATE_HZ = 100;

@@ -28,6 +28,15 @@
 using namespace Eigen;
 using namespace std;
 
+struct Ultrasonics {
+    double front_left;
+    double front_right;
+    double left;
+    double right;
+    double back_left;
+    double back_right;
+};
+
 long long getCurrentMsCount();
 
 

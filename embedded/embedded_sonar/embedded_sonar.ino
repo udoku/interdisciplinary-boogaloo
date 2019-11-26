@@ -6,13 +6,12 @@
 #define NUM_SENSORS 6
 
 #define KILL_PIN 4
-#define ECHO_PIN 7
-#define SERVO_PIN 8
+#define ECHO_PIN 3
 
 #define METERS_PER_US 0.000343
 #define PING_WAIT 10000
 
-const int sensor_pins[NUM_SENSORS] = {1, 2, 3, 4, 5, 6};
+const int sensor_pins[NUM_SENSORS] = {12, 11, 10, 9, 8, 7};
 
 ros::NodeHandle nh;
 

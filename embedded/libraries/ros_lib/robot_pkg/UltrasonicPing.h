@@ -19,6 +19,12 @@ namespace robot_pkg
       _sensor_id_type sensor_id;
       typedef float _distance_type;
       _distance_type distance;
+      enum { FRONT_LEFT =  0 };
+      enum { FRONT_RIGHT =  1 };
+      enum { LEFT =  2 };
+      enum { RIGHT =  3 };
+      enum { BACK_LEFT =  4 };
+      enum { BACK_RIGHT =  5 };
 
     UltrasonicPing():
       header(),
@@ -73,7 +79,7 @@ namespace robot_pkg
     }
 
     const char * getType(){ return "robot_pkg/UltrasonicPing"; };
-    const char * getMD5(){ return "c0b926d50a4206654c8f14634b6f771c"; };
+    const char * getMD5(){ return "ece6a849d21f0f30e286fe4b3241a01c"; };
 
   };
 

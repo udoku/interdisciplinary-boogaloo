@@ -5,9 +5,9 @@
 
 #include <Servo.h>
 
-#define DISABLE_LED 1
-#define ARMED_LED 2
-#define COMPLETE_LED 3
+#define DISABLE_LED 2
+#define ARMED_LED 3
+#define COMPLETE_LED 4
 
 #define NUM_SERVOS 7
 
@@ -52,7 +52,13 @@ void led_update() {
   else {
     digitalWrite(DISABLE_LED, LOW);
     digitalWrite(ARMED_LED, LOW);
-    digitalWrite(COMPLETE_LED, HIGH);
+    if (millis() % 2000 < 1000) {
+      digitalWrite(COMPLETE_LED, HIGH);
+    }
+    else {
+      digitalWrite(COMPLETE_LED, LOW);
+    }
+    
   }
 }
 
@@ -61,13 +67,13 @@ void setup() {
   nh.initNode(); 
 
   // TODO: setup pins
-  servos[0].attach(5);
-  servos[1].attach(6);
+  servos[0].attach(11);
+  servos[1].attach(9);
   servos[2].attach(7);
-  servos[3].attach(8);
-  servos[4].attach(9);
-  servos[5].attach(10);
-  servos[6].attach(11);
+  servos[3].attach(12);
+  servos[4].attach(10);
+  servos[5].attach(8);
+  servos[6].attach(6);
 
   led_state = robot_pkg::LedCommand::DISABLED;
 
