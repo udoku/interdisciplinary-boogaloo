@@ -26,7 +26,7 @@ const char* const LED_COMMAND_TOPIC = "led_command";
 const char* const ULTRASONIC_PING_TOPIC = "ultrasonic_ping";
 
 /** UPDATE RATES */
-const double MOBILITY_UPDATE_RATE_HZ = 100;
+const double MOBILITY_UPDATE_RATE_HZ = 10;
 
 /** MOBILITY PARAMETERS */
 const double MAX_POS_ERROR = 0.01; // meters

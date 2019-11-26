@@ -48,8 +48,8 @@ ros::Publisher g_motion_target_pub;
 ros::Subscriber g_robot_state_sub;
 
 void init(ros::NodeHandle nh) {
-    g_motion_target_pub = nh.advertise<robot_pkg::MotionTarget>(MOTION_TARGET_TOPIC, 1000);
-    g_robot_state_sub = nh.subscribe(ROBOT_STATE_TOPIC, 1000, &handleNewRobotStateMsg);
+    g_motion_target_pub = nh.advertise<robot_pkg::MotionTarget>(MOTION_TARGET_TOPIC, 5);
+    g_robot_state_sub = nh.subscribe(ROBOT_STATE_TOPIC, 5, &handleNewRobotStateMsg);
     g_has_robot_state = false;
 }
 
@@ -242,8 +242,8 @@ Ultrasonics g_ultrasonic_data;
 void updateUltrasonic(robot_pkg::UltrasonicPing msg);
 
 void init(ros::NodeHandle nh) {
-    g_hardware_reset_pub = nh.advertise<std_msgs::Bool>(HARDWARE_RESET_TOPIC, 1000);
-    g_led_command_pub = nh.advertise<robot_pkg::LedCommand>(LED_COMMAND_TOPIC, 1000);
+    g_hardware_reset_pub = nh.advertise<std_msgs::Bool>(HARDWARE_RESET_TOPIC, 5);
+    g_led_command_pub = nh.advertise<robot_pkg::LedCommand>(LED_COMMAND_TOPIC, 5);
     g_ultrasonic_sub = nh.subscribe(ULTRASONIC_PING_TOPIC, 12, &updateUltrasonic);
 }
 
