@@ -1,5 +1,4 @@
 #include <ArduinoHardware.h>
-#include <ArduinoTcpHardware.h>
 #include <ros.h>
 #include <robot_pkg/ServoCommand.h>
 
@@ -29,5 +28,9 @@ void setup() {
   servos[4].attach(9);
   servos[5].attach(10);
   
-  handle.attach(sub);
+  handle.subscribe(sub);
+}
+
+void loop() {
+  handle.spinOnce();
 }
