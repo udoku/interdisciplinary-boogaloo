@@ -1,24 +1,73 @@
 #include <ArduinoHardware.h>
 #include <ros.h>
 #include <robot_pkg/ServoCommand.h>
+#include <robot_pkg/LedCommand.h>
+#include <std_msgs/Bool.h>
 
 #include <Servo.h>
 
-ros::NodeHandle handle;
+#define DISABLE_LED 1
+#define ARMED_LED 2
+#define COMPLETE_LED 3
+#define KILL_PIN 4
+
+ros::NodeHandle nh;
+int led_state;
+std_msgs::Bool kill_msg;
+
+ros::Publisher killswitch_pub("killswitch", &kill_msg);
 
 Servo servos[6];
 
-void msg_cb(const robot_pkg::ServoCommand msg){
+// Pass servo commands
+void servo_callback(const robot_pkg::ServoCommand msg){
   if (0 <= msg.servo_id && msg.servo_id < 6) {
     servos[msg.servo_id].write(msg.value);
   }
 }
 
-ros::Subscriber<robot_pkg::ServoCommand> sub("servo_command", msg_cb);
+// Update LED intended state
+void led_callback(const robot_pkg::LedCommand msg) {
+  led_state = msg.state;
+}
+
+ros::Subscriber<robot_pkg::ServoCommand> servo_sub("servo_command", servo_callback);
+ros::Subscriber<robot_pkg::LedCommand> led_sub("led_command", led_callback);
+
+// Update LED actual state
+void led_update() {
+  if (led_state == robot_pkg::LedCommand::DISABLED) {
+    digitalWrite(DISABLE_LED, HIGH);
+    digitalWrite(ARMED_LED, LOW);
+    digitalWrite(COMPLETE_LED, LOW);
+  }
+  else if (led_state == robot_pkg::LedCommand::ARMED) {
+    digitalWrite(DISABLE_LED, LOW);
+    // Hacky way of blinking
+    if (millis() % 1300 <= 100) {
+      digitalWrite(ARMED_LED, HIGH);
+    }
+    else {
+      digitalWrite(ARMED_LED, LOW);
+    }
+    digitalWrite(COMPLETE_LED, LOW);
+  }
+  else {
+    digitalWrite(DISABLE_LED, LOW);
+    digitalWrite(ARMED_LED, LOW);
+    digitalWrite(COMPLETE_LED, HIGH);
+  }
+}
+
+// Update killswitch
+void kill_update() {
+  kill_msg.data = digitalRead(KILL_PIN);
+  killswitch_pub.publish(&kill_msg);
+}
 
 void setup() {
   // put your setup code here, to run once:
-  handle.initNode(); 
+  nh.initNode(); 
 
   // TODO: setup pins
   servos[0].attach(5);
@@ -27,10 +76,21 @@ void setup() {
   servos[3].attach(8);
   servos[4].attach(9);
   servos[5].attach(10);
+
+  led_state = robot_pkg::LedCommand::DISABLED;
+
+  pinMode(DISABLE_LED, OUTPUT);
+  pinMode(ARMED_LED, OUTPUT);
+  pinMode(COMPLETE_LED, OUTPUT);
+  pinMode(KILL_PIN, INPUT);
   
-  handle.subscribe(sub);
+  nh.subscribe(servo_sub);
+  nh.subscribe(led_sub);
+  nh.advertise(killswitch_pub);
 }
 
 void loop() {
-  handle.spinOnce();
+  nh.spinOnce();
+  led_update();
+  kill_update();
 }
