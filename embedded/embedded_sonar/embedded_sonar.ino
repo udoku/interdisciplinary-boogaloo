@@ -45,7 +45,7 @@ void read_sensor() {
 
 // Update killswitch
 void kill_update() {
-  kill_msg.data = digitalRead(KILL_PIN);
+  kill_msg.data = !digitalRead(KILL_PIN);
   killswitch_pub.publish(&kill_msg);
 }
 

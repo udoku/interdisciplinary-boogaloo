@@ -29,31 +29,33 @@ const char* const ULTRASONIC_PING_TOPIC = "ultrasonic_ping";
 const double MOBILITY_UPDATE_RATE_HZ = 10;
 
 /** MOBILITY PARAMETERS */
-const double MAX_POS_ERROR = 0.01; // meters
-const double MAX_ANG_ERROR = 0.01; // radians
+const double MAX_POS_ERROR = 0.1; // meters
+const double MAX_ANG_ERROR = 0.1; // radians
 
 const double MAX_SPEED = 0.1; // meters/s
-const double MAX_TURN_SPEED = 0.1; // radians/s
+const double MAX_TURN_SPEED = 0.3; // radians/s
 
-const double SPEED_TO_POWER = 0.5; // multiply by speed to get servo power
-const double TURN_TO_SPEED = 0.1; // multiply by rad/s to get necessary m/s of wheels
+const double SPEED_TO_POWER = 300; // multiply by speed to get servo power
+const double TURN_TO_SPEED = 0.2; // multiply by rad/s to get necessary m/s of wheels
 
-const double TRANSITION_WAIT_TIME = 1.0; // seconds
+const double TRANSITION_WAIT_TIME = 2.0; // seconds
 const double DROP_WAIT_TIME = 1.0; // seconds
 
 const int WHEEL_IDS[3] = {0, 1, 2};
 const int PIVOT_IDS[3] = {3, 4, 5};
 const int DROPPER_ID = 6;
 
-const double TURNING_SETPOINTS[3] = {0.0, 0.0, 0.0};
-const double STRAIGHT_SETPOINTS[3] = {0.0, 0.0, 0.0};
-const double STRAFE_SETPOINTS[3] = {0.0, 0.0, 0.0};
+const double STRAIGHT_SETPOINTS[3] = {53, 53, -18};
+const double STRAFE_SETPOINTS[3] = {-55, -54, 82};
+const double TURNING_SETPOINTS[3] = {-55, 10, 10};
 
-const double STRAIGHT_DIRECTIONS[3] = {1, 1, 1};
-const double TURN_DIRECTIONS[3] = {1, 1, 1};
+
+const double STRAIGHT_DIRECTIONS[3] = {-1, -1, -1};
+const double STRAFE_DIRECTIONS[3] = {-1, -1, 1};
+const double TURN_DIRECTIONS[3] = {-1, 1, -1};
 
 const int MAX_TIC_TAC_DROPS = 4;
-const double DROP_SETPOINTS[5] = {0.0, 0.0, 0.0, 0.0, 0.0};
+const double DROP_SETPOINTS[5] = {90, 50, 0, -50, -90};
 
 const double SERVO_COMMAND_ZERO = 90;
 
