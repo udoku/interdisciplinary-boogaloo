@@ -62,6 +62,7 @@ add_message_files(
   Detection.msg
   Detections.msg
   UltrasonicPing.msg
+  LedCommand.msg
 )
 
 ## Generate services in the 'srv' folder
