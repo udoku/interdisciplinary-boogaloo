@@ -230,7 +230,7 @@ target_link_libraries(${PROJECT_NAME}_vision
 # )
 install(PROGRAMS
   src/vision/detector_server.py
-  src/hardware/camera_proces.py
+  src/hardware/camera_process.py
   src/hardware/killswitch_override.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
