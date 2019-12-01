@@ -1,6 +1,6 @@
 <launch>
 
-<node name="hardware" pkg="robot_pkg" type="hardware_node" output="screen">
+<node name="camera" pkg="robot_pkg" type="camera_process.py" output="screen">
 </node>
 
 <node name="arduino_1" pkg="rosserial_arduino" type="serial_node.py">

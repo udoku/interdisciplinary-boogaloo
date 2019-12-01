@@ -1,0 +1,6 @@
+<launch>
+
+<node name="killswitch_override" pkg="robot_pkg" type="killswitch_override.py" output="screen">
+</node>
+
+</launch>

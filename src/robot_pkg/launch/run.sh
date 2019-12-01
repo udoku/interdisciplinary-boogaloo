@@ -81,6 +81,13 @@ echo Starting roscore
 tmux send-keys \
     "roscore" Enter
 
+tmux neww -n killswitch_override # New window for killswitch override
+tmux send-keys  \
+    "export ROS_IP=$ROS_IP" Enter \
+    "cd $RVR_ROOT && source config.sh" Enter \
+    "cd $RVR_ROOT/../../../ && source devel/setup.bash" Enter \
+    "cd $RVR_ROOT/../ && roslaunch --wait launch/killswitch.launch" Enter
+
 # sleep 2
 
 tmux selectw -t 0

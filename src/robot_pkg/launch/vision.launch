@@ -11,8 +11,12 @@
       type="vision_node" output="screen">
     </node>
 
+    <node name="image_replayer" type="transform" pkg="topic_tools"
+        args="/images/camera /images/camera/image sensor_msgs/Image m.image">
+    </node>
+
     <node name="image_compressor_camera" type="republish" pkg="image_transport"
-        args="raw in:=/images/camera compressed out:=/images/camera">
+        args="raw in:=/images/camera/image compressed out:=/images/camera/image">
     </node>
 
     <node name="image_compressor_detected" type="republish" pkg="image_transport"

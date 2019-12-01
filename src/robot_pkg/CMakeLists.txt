@@ -215,22 +215,6 @@ target_link_libraries(${PROJECT_NAME}_vision
     ${catkin_LIBRARIES}
 )
 
-add_executable(${PROJECT_NAME}_hardware
-    src/hardware/hardware_process.cpp
-)
-
-set_target_properties(${PROJECT_NAME}_hardware PROPERTIES OUTPUT_NAME hardware_node PREFIX "")
-add_dependencies(${PROJECT_NAME}_hardware ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-add_definitions(-DUI)
-
-target_link_libraries(${PROJECT_NAME}_hardware
-    ${PROJECT_NAME}_common
-    ${OPENCV_LIBRARIES}
-    ${catkin_LIBRARIES}
-)
-
-
 #############
 ## Install ##
 #############
@@ -246,6 +230,8 @@ target_link_libraries(${PROJECT_NAME}_hardware
 # )
 install(PROGRAMS
   src/vision/detector_server.py
+  src/hardware/camera_proces.py
+  src/hardware/killswitch_override.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
