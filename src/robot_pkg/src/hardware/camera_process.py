@@ -48,7 +48,6 @@ def publish_camera(time):
         return
 
     _, img = cap.read()
-
     new_frame = Frame()
     new_frame.image = bridge.cv2_to_imgmsg(img, 'bgr8')
     new_frame.state = current_state

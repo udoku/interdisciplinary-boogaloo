@@ -11,10 +11,6 @@
       type="vision_node" output="screen">
     </node>
 
-    <node name="image_replayer" type="transform" pkg="topic_tools"
-        args="/images/camera /images/camera/image sensor_msgs/Image m.image">
-    </node>
-
     <node name="image_compressor_camera" type="republish" pkg="image_transport"
         args="raw in:=/images/camera/image compressed out:=/images/camera/image">
     </node>
@@ -26,4 +22,10 @@
     <node name="detectors" pkg="robot_pkg"
             type="detector_server.py" output="screen">
     </node>
+
+    <node name="image_replayer" type="transform" pkg="topic_tools" respawn="true"
+        args="/images/camera /images/camera/image sensor_msgs/Image m.image">
+    </node>
+
+
 </launch>
