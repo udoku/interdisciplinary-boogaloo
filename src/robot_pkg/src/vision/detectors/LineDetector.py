@@ -47,7 +47,8 @@ class LineDetector(py_detector):
         # To be overwritten by preprocessed image in locations not in mask
         cv2.bitwise_and(preproc, preproc, work_image, mask=FULL_MASK)
                 
-        work_image = cv2.threshold(work_image, CV2_THRESHOLD, 255)
+        work_image = cv2.threshold(work_image, CV2_THRESHOLD, 255,
+                                   cv2.THRESH_BINARY)
                         
         contours, _ = cv2.findContours(work_image, 1, cv2.CV_CHAIN_APPROX_SIMPLE)
         
