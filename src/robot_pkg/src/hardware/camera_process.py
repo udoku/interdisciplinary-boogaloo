@@ -36,7 +36,7 @@ def main():
 
     camera_timer = rospy.Timer(rospy.Duration(1.0/30.0), publish_camera)
     camera_pub = rospy.Publisher(CAMERA_IMAGES_TOPIC, Frame)
-    state_sub = rospy.Subscriber(ROBOT_STATE_TOPIC, RobotState, handle_new_state)
+    state_sub = rospy.Subscriber(ROBOT_STATE_TOPIC, RobotState, handle_new_state, queue_size=1)
 
     print('Camera process initialized')
 
@@ -54,8 +54,8 @@ def publish_camera(time):
 
     _, img = cap.read()
     new_frame = Frame()
-    new_frame.image = bridge.cv2_to_imgmsg(undistort(img), 'bgr8')
     new_frame.state = current_state
+    new_frame.image = bridge.cv2_to_imgmsg(undistort(img), 'bgr8')
 
     camera_pub.publish(new_frame)
 
@@ -63,7 +63,7 @@ def handle_new_state(msg):
     global current_state
     current_state = msg
 
-def undistort(img, balance=1):
+def undistort(img, balance=0.5):
     global DIM
     global K
     global D

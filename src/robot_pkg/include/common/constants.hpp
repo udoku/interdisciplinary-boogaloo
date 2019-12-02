@@ -29,14 +29,14 @@ const char* const ULTRASONIC_PING_TOPIC = "ultrasonic_ping";
 const double MOBILITY_UPDATE_RATE_HZ = 10;
 
 /** MOBILITY PARAMETERS */
-const double MAX_POS_ERROR = 0.1; // meters
-const double MAX_ANG_ERROR = 0.1; // radians
+const double MAX_POS_ERROR = 0.01; // meters
+const double MAX_ANG_ERROR = 0.05; // radians
 
-const double MAX_SPEED = 0.1; // meters/s
-const double MAX_TURN_SPEED = 0.3; // radians/s
+const double MAX_SPEED = 0.22; // meters/s
+const double MAX_TURN_SPEED = 1.5; // radians/s
 
-const double SPEED_TO_POWER = 300; // multiply by speed to get servo power
-const double TURN_TO_SPEED = 0.2; // multiply by rad/s to get necessary m/s of wheels
+const double SPEED_TO_POWER = 68.18; // multiply by speed to get servo power
+const double TURN_TO_SPEED = 0.055; // multiply by rad/s to get necessary m/s of wheels
 
 const double TRANSITION_WAIT_TIME = 2.0; // seconds
 const double DROP_WAIT_TIME = 1.0; // seconds
