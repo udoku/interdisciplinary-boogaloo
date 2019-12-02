@@ -124,7 +124,9 @@ void* CommanderProcess::startTaskManagerSequence(void* arg __attribute__((unused
     ros::Duration(0.2).sleep();
 
     // Run main task
-    tasks[task_to_run_]->run();
+    TaskPtr main_task = TaskPtr(new TaskSeq({tasks[task_to_run_],
+                                             tasks["finish"]}));
+    main_task->run();
 
     System::systemWideReset();
 

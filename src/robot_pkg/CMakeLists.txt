@@ -171,10 +171,19 @@ add_executable(${PROJECT_NAME}_commander
 	src/commander/game_plan.hpp
 	src/commander/lambda_task.hpp src/commander/lambda_task.cpp
 
+  src/commander/managers/finish_manager.hpp src/commander/managers/finish_manager.cpp
+
   src/commander/managers/demo_manager.hpp src/commander/managers/demo_manager.cpp
   src/commander/managers/dropper_test_manager.hpp src/commander/managers/dropper_test_manager.cpp
   src/commander/managers/move_test_manager.hpp src/commander/managers/move_test_manager.cpp
   src/commander/managers/ultrasonic_test_manager.hpp src/commander/managers/ultrasonic_test_manager.cpp
+
+  src/commander/managers/start_manager.hpp src/commander/managers/start_manager.cpp
+  src/commander/managers/plateau_manager.hpp src/commander/managers/plateau_manager.cpp
+  src/commander/managers/obstacle_manager.hpp src/commander/managers/obstacle_manager.cpp
+  src/commander/managers/mobility_manager.hpp src/commander/managers/mobility_manager.cpp
+  src/commander/managers/line_manager.hpp src/commander/managers/line_manager.cpp
+  src/commander/managers/end_manager.hpp src/commander/managers/end_manager.cpp
 
 	src/commander/task_manager_base.hpp src/commander/task_manager_base.cpp
 	src/commander/task_seq.hpp src/commander/task_seq.cpp
