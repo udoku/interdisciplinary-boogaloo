@@ -6,9 +6,24 @@ from vision_utils import *
 from robot_pkg.msg import Detection
 
 ISCV3 = cv2.__version__[0]=="3"
+# Assumed fixed value
+IMAGE_SIZE = (480, 720)
 
 CV2_THRESHOLD = 60
+
+# cv2 masks: 1 = set in output, 0 = leave alone
 FISHEYE_MASK = np.load("")
+
+UPPER_CROP = 1./8
+LOWER_CROP = 1./2
+LEFT_CROP = 1./3
+RIGHT_CROP = 1./3
+
+CROP_REGION = np.zeros(IMAGE_SIZE)
+CROP_REGION[int(IMAGE_SIZE[0] * UPPER_CROP):int(IMAGE_SIZE[0] * (1-LOWER_CROP)),
+    int(IMAGE_SIZE[1] * LEFT_CROP):int(IMAGE_SIZE[1] * (1-RIGHT_CROP))] = 1
+    
+FULL_MASK = cv2.bitwise_or(FISHEYE_MASK, CROP_REGION)
 
 class LineDetector(py_detector):
 
@@ -30,12 +45,10 @@ class LineDetector(py_detector):
         # Generate pure white image
         work_image = 255 * np.ones(preproc.shape)
         # To be overwritten by preprocessed image in locations not in mask
-        cv2.bitwise_and(preproc, preproc, work_image, mask=FISHEYE_MASK)
-        
-        work_image = cv2.threshold(work_image, CV2_THRESHOLD, 255)
-        
-        # TODO: crop to desired fixed region to check for contour
+        cv2.bitwise_and(preproc, preproc, work_image, mask=FULL_MASK)
                 
+        work_image = cv2.threshold(work_image, CV2_THRESHOLD, 255)
+                        
         contours, _ = cv2.findContours(work_image, 1, cv2.CV_CHAIN_APPROX_SIMPLE)
         
         if len(contours) > 0:
@@ -43,17 +56,13 @@ class LineDetector(py_detector):
             center_x = int(line['m10']/line['m00'])
             center_y = int(line['m01']/line['m00'])
             
-            # TODO: on crop, figure out how to undo crop to draw on og image
-            
             # Mark center
             cv2.line(draw_image, (center_x,0), (center_x, height), (255,0,0), 1)
             cv2.line(draw_image, (0,center_y), (width, center_y), (255,0,0), 1)
  
             # Display contour
             cv2.drawContours(draw_image, contours, -1, (0, 255, 0), 1)
-            
-            # TODO: on crop, transform back to coords in og image
-            
+                        
             output_global_loc = vision.pixel_to_global(np.array([center_x, center_y]))
             
             # Return pixel to location
