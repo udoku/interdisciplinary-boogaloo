@@ -7,7 +7,7 @@ import sys
 import random
 from vision_utils import *
 from robot_pkg.msg import Detection
-from joblib import load
+import pickle
 
 ISCV3 = cv2.__version__[0]=="3"
 
@@ -19,7 +19,7 @@ class DemoDetector(py_detector):
         this_file_dir = os.path.dirname(os.path.abspath(__file__))
         ASSETS_PATH = os.path.join(this_file_dir, "../assets/")
         global classifier
-        classifier = load(ASSETS_PATH + 'demo.joblib')
+        classifier = pickle.load(open(ASSETS_PATH + 'demo.pickle'))
 
     def reset(self):
         pass
