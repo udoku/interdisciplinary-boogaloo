@@ -78,6 +78,7 @@ class py_detection:
 class py_detection_type:
     INVALID = -1
     DEMO = 0
+    LINE = 1
 
 def vector3d(x, y, z):
     return numpy.array([x, y, z], dtype='f8')
