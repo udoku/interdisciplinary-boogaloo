@@ -21,6 +21,7 @@ ROBOT_STATE_TOPIC = "robot_state"
 DIM=(640, 480)
 K=np.array([[312.1901398049754, 0.0, 321.2870436838706], [0.0, 312.3400022092426, 218.27186480894005], [0.0, 0.0, 1.0]])
 D=np.array([[-0.04833960724822996], [0.03665149872954583], [-0.05474311939603214], [0.02306394385055088]])
+BALANCE=0.5
 
 def main():
     global bridge
@@ -56,6 +57,7 @@ def publish_camera(time):
     new_frame = Frame()
     new_frame.state = current_state
     new_frame.image = bridge.cv2_to_imgmsg(undistort(img), 'bgr8')
+    new_frame.valid = True
 
     camera_pub.publish(new_frame)
 
@@ -63,10 +65,11 @@ def handle_new_state(msg):
     global current_state
     current_state = msg
 
-def undistort(img, balance=0.5):
+def undistort(img):
     global DIM
     global K
     global D
+    global BALANCE
 
     dim1 = img.shape[:2][::-1]  #dim1 is the dimension of input image to un-distort
     assert dim1[0]/dim1[1] == DIM[0]/DIM[1], "Image to undistort needs to have same aspect ratio as the ones used in calibration"
@@ -76,7 +79,7 @@ def undistort(img, balance=0.5):
     scaled_K = K * dim1[0] / DIM[0]  # The values of K is to scale with image dimension.
     scaled_K[2][2] = 1.0  # Except that K[2][2] is always 1.0
     # This is how scaled_K, dim2 and balance are used to determine the final K used to un-distort image. OpenCV document failed to make this clear!
-    new_K = cv2.fisheye.estimateNewCameraMatrixForUndistortRectify(scaled_K, D, dim2, np.eye(3), balance=balance)
+    new_K = cv2.fisheye.estimateNewCameraMatrixForUndistortRectify(scaled_K, D, dim2, np.eye(3), balance=BALANCE)
     map1, map2 = cv2.fisheye.initUndistortRectifyMap(scaled_K, D, np.eye(3), new_K, dim3, cv2.CV_16SC2)
     return cv2.remap(img, map1, map2, interpolation=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
 

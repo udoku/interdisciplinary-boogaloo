@@ -5,3 +5,4 @@ devel/*
 logs/*
 robot_logs/*
 !robot_logs/.gitkeep
+*.pyc

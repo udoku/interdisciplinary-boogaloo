@@ -37,6 +37,9 @@ struct Ultrasonics {
     double back_right;
 };
 
+typedef int DetectionType;
+typedef int DetectorType;
+
 long long getCurrentMsCount();
 
 

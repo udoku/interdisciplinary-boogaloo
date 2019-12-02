@@ -74,6 +74,7 @@ void VisionProcess::processImage(const robot_pkg::Frame::ConstPtr& msg) {
     current_frame_.header = msg->header;
     current_frame_.image = msg->image;
     current_frame_.state = msg->state;
+    current_frame_.valid = msg->valid;
 }
 
 void VisionProcess::checkSwitchDetectors() {

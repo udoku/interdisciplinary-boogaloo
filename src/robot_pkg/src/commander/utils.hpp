@@ -38,24 +38,24 @@ namespace Recipes {
 namespace Vision {
 void init(ros::NodeHandle nh);
 
-// void handleNewVisionData(const crt_system::Detections::ConstPtr& detections);
+void handleNewVisionData(const robot_pkg::Detections::ConstPtr& detections);
 
-// /** Tell the vision process to use the given detector. */
-// void setDetector(DetectorType detector_type, int mode = 0);
+/** Tell the vision process to use the given detector. */
+void setDetector(DetectorType detector_type, int mode = 0);
 
-// // Clears the current cached vision data.
-// void clearVisionData();
+// Clears the current cached vision data.
+void clearVisionData();
 
-// /** Get the most recent vision response for the object 'object_type'*/
-// vector<Detection> getCurrentVisionData(DetectionType object_type);
+/** Get the most recent vision response for the object 'object_type'*/
+vector<robot_pkg::Detection> getCurrentVisionData(DetectionType object_type);
 
-// /** Wait for some data for DetectionType to show up. (returns false if it
-// times out first (timeout is in seconds). Stores the data in result if it is non-null */
-// bool waitVisionData(DetectionType object_type, double timeout, vector<Detection>* result = NULL,
-//                       unsigned int min_num_detections = 1, unsigned int max_num_detections = 1e6);
-// bool waitVisionData(vector<DetectionType> object_types, double timeout,
-//                       vector<Detection>* result = NULL, unsigned int min_num_detections = 1,
-//                       unsigned int max_num_detections = 1e6);
+/** Wait for some data for DetectionType to show up. (returns false if it
+times out first (timeout is in seconds). Stores the data in result if it is non-null */
+bool waitVisionData(DetectionType object_type, double timeout, vector<robot_pkg::Detection>* result = NULL,
+                      unsigned int min_num_detections = 1, unsigned int max_num_detections = 1e6);
+bool waitVisionData(vector<DetectionType> object_types, double timeout,
+                      vector<robot_pkg::Detection>* result = NULL, unsigned int min_num_detections = 1,
+                      unsigned int max_num_detections = 1e6);
 } // namespace Vision
 
 /** Functionality to manipulate non-mobility actuators */

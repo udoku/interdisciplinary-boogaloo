@@ -22,9 +22,6 @@ VALID_DETECTORS = {
     Detector.DEMO_DETECTOR: DemoDetector
 }
 
-MATRIX = None
-DISTORTION = None
-
 bridge = None
 detector = None
 
@@ -40,11 +37,12 @@ def main():
 
 def handle_setup_calls(req):
     if req.detector.detector_type not in VALID_DETECTORS:
-        print("detector name {} not found".format(req.detector.detector_name))
+        if (int(req.detector.detector_type) != int(Detector.NO_DETECTOR)):
+            print("detector name {} not found".format(req.detector.detector_type))
         return {'success': False}
-    print("detector name {} about to setup".format(req.detector.detector_name))
+    print("detector name {} about to setup".format(req.detector.detector_type))
     global detector
-    detector = VALID_DETECTORS[req.detector.detector_name]()
+    detector = VALID_DETECTORS[req.detector.detector_type]()
     detector.set_mode(req.detector.detector_mode)
 
     return {
@@ -54,17 +52,18 @@ def handle_setup_calls(req):
 def handle_run_calls(req):
     global detector
     if req.detector.detector_type not in VALID_DETECTORS:
-        print("detector name {} not found".format(req.detector.detector_name))
+        if (int(req.detector.detector_type) != int(Detector.NO_DETECTOR)):
+            print("detector name {} not found".format(req.detector.detector_type))
         return {'success': False}
     if detector == None:
         print("No detector is set up!")
 
-    vision_obj = py_vision(MATRIX, DISTORTION, req.frame.state)
+    vision_obj = py_vision(req.frame.state)
 
     images = [None, None]
-    distorted_img = bridge.imgmsg_to_cv2(req.frame.image, 'bgr8')
+    img = bridge.imgmsg_to_cv2(req.frame.image, 'bgr8')
 
-    images[vision_obj.IMAGE] = vision_obj.undistort_image(distorted_img)
+    images[vision_obj.IMAGE] = img
     images[vision_obj.DETECTOR] = images[vision_obj.IMAGE].copy()
 
     out = detector.detect(images, vision_obj)
@@ -86,25 +85,5 @@ def handle_run_calls(req):
 
     return {'success': True, 'feedback': feedback, 'detections': detections}
 
-def setupMatrices():
-    global MATRIX
-    global DISTORTION
-
-    print('Loading camera matrices')
-
-    vision_obj = py_vision(None, None, None)
-    current = os.path.dirname(os.path.abspath(__file__))
-    camera_file = cv2.FileStorage(current + CAMERA_YAML_PATH, cv2.FILE_STORAGE_READ)
-    
-    MATRIX = camera_file.getNode('M').mat()
-    DISTORTION = camera_file.getNode('D').mat()
-
-    camera_file.release()
-    print('Camera matrices loaded')
-
 if __name__ == '__main__':
-    print('hello')
-    setupMatrices()
     main()
-
-print('wat')
