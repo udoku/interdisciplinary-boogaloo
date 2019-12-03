@@ -11,5 +11,6 @@ int32 detection_type
 float64 confidence #0-1 value for % confidence
 
 int32 DEMO                  = 0
+int32 LINE                  = 1
 
-int32 NUM_DETECTION_TYPES   = 1
+int32 NUM_DETECTION_TYPES   = 2

@@ -1,18 +1,50 @@
 #include "line_manager.hpp"
 
-LineManager::LineManager() : message_("Hello World!") {}
+LineManager::LineManager() : distance_(0) {}
 
 string LineManager::getName() { return "Line"; }
 
 bool LineManager::start() {
     ROS_INFO("Starting line");
-    return call(bind(&LineManager::printMessage, this, 5));
+    target_.pos_x = Motion::getCurrentState().pos_x;
+    target_.pos_y = Motion::getCurrentState().pos_y;
+    target_.yaw = Motion::getCurrentState().yaw;
+    Vision::setDetector(robot_pkg::Detector::LINE_DETECTOR);
+    return call(bind(&LineManager::followLine, this));
 }
 
-// Dispatch while trying to get close to the bins
-bool LineManager::printMessage(int n_times) {
-    for (int i = 0; i < n_times; i++) {
-        ROS_INFO("%s", message_.c_str());
+bool LineManager::followLine() {
+    vector<robot_pkg::Detection> dets;
+    ros::Duration(1).sleep();
+
+    while (distance_ < MAX_DIST) {
+        Vision::waitVisionData(robot_pkg::Detection::LINE, 10, &dets, 1, 4);
+
+        // No dets, cry. TODO search for line
+        if (dets.size() == 0) {
+            ROS_WARN("No line found, failing task");
+            return done(false);
+        }
+
+        robot_pkg::Detection det = dets[0];
+
+        distance_ += sqrt(pow(target_.pos_x-det.pos_x, 2) + pow(target_.pos_y-det.pos_y, 2));
+
+        target_.pos_x = det.pos_x;
+        target_.pos_y = det.pos_y;
+        target_.yaw = det.orientation;
+
+        Motion::moveTo(target_);
+
+        ros::Duration(.5).sleep();
+
+        while (Motion::getCurrentState().at_target == false) {
+            ros::Duration(.1).sleep();
+        }
+
+        ros::Duration(1).sleep();
     }
+
+    ROS_INFO("Reached end of line!");
     return done(true);
 }
