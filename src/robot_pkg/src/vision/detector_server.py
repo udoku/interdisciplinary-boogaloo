@@ -12,6 +12,7 @@ from robot_pkg.msg import Detection, Detections, Detector
 from robot_pkg.srv import RunDetector, SetupDetector
 
 from detectors.DemoDetector import DemoDetector
+from detectors.ObstacleDetector import ObstacleDetector
 
 DETECTOR_SETUP_TOPIC = 'detector_setup'
 DETECTOR_RUN_TOPIC = 'detector_run'
@@ -19,7 +20,8 @@ DETECTOR_RUN_TOPIC = 'detector_run'
 CAMERA_YAML_PATH = 'calib/camera_data.yml'
 
 VALID_DETECTORS = {
-    Detector.DEMO_DETECTOR: DemoDetector
+    Detector.DEMO_DETECTOR: DemoDetector,
+    Detector.OBSTACLE_DETECTOR: ObstacleDetector
 }
 
 bridge = None
@@ -79,7 +81,7 @@ def handle_run_calls(req):
                                             detection.width,
                                             detection.depth,
                                             detection.height,
-                                            detection.det_type, 
+                                            detection.det_type,
                                             detection.confidence)
                                 for detection in out]
 

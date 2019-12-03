@@ -84,6 +84,7 @@ class py_detection:
 class py_detection_type:
     INVALID = -1
     DEMO = 0
+    OBSTACLE = 1
 
 def treeThreshold(image, classifier):
     shp = image.shape
