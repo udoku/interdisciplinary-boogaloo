@@ -6,6 +6,7 @@ string ObstacleManager::getName() { return "Obstacle"; }
 
 bool ObstacleManager::start() {
     ROS_INFO("Starting obstacle");
+    Vision::setDetector(robot_pkg::Detector::OBSTACLE_DETECTOR);
     return call(bind(&ObstacleManager::printMessage, this, 5));
 }
 
