@@ -33,7 +33,7 @@ def main():
     bridge = cv_bridge.CvBridge()
     rospy.init_node('camera_process')
 
-    os.system('v4l2-ctl --set-ctrl=auto_exposure=0')
+    os.system('v4l2-ctl --set-ctrl=auto_exposure=1')
     os.system('v4l2-ctl --set-ctrl=white_balance_auto_preset=0')
     os.system('v4l2-ctl --set-ctrl=blue_balance=1700')
     os.system('v4l2-ctl --set-ctrl=red_balance=1100')

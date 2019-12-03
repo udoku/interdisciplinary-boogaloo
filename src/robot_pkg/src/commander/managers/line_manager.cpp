@@ -42,7 +42,7 @@ bool LineManager::followLine() {
             ros::Duration(.1).sleep();
         }
 
-        ros::Duration(1).sleep();
+        ros::Duration(2).sleep();
     }
 
     ROS_INFO("Reached end of line!");

@@ -59,9 +59,11 @@ class py_vision:
 
         local_x = local_pos[2]
         local_y = -local_pos[0]
+        print('local x: ' + str(local_x) + ' local y: ' + str(local_y))
+        print('rx: ' + str(self.ROBOT_STATE.pos_x) + ' ry: ' + str(self.ROBOT_STATE.pos_y) + ' rr: ' + str(self.ROBOT_STATE.yaw))
         global_pos = np.array([
-            local_x * math.cos(self.ROBOT_STATE.yaw) + local_y * math.sin(self.ROBOT_STATE.yaw) + self.ROBOT_STATE.pos_x,
-            -local_x * math.sin(self.ROBOT_STATE.yaw) + local_y * math.cos(self.ROBOT_STATE.yaw) + self.ROBOT_STATE.pos_y
+            local_x * math.cos(self.ROBOT_STATE.yaw) - local_y * math.sin(self.ROBOT_STATE.yaw) + self.ROBOT_STATE.pos_x,
+            local_x * math.sin(self.ROBOT_STATE.yaw) + local_y * math.cos(self.ROBOT_STATE.yaw) + self.ROBOT_STATE.pos_y
         ])
 
         print('global (camera) pos: ' + str(global_pos))
