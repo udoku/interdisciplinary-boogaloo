@@ -2,74 +2,109 @@ from __future__ import division, print_function
 import numpy as np
 import cv2
 import math
+import os
 from vision_utils import *
 from robot_pkg.msg import Detection
 
-ISCV3 = cv2.__version__[0]=="3"
-# Assumed fixed value
-IMAGE_SIZE = (480, 720)
 
-CV2_THRESHOLD = 60
+# TUNE ME
+ROI_VERTICES = np.array([[(110, 130), (110, 330), (540, 330), (540, 130)]], np.int32)
+# TUNE ME
+THRESH_VAL = 70
 
-# cv2 masks: 1 = set in output, 0 = leave alone
-FISHEYE_MASK = np.load("")
+# If you switch to the DecisionTree thresholding:
+# Blur -> decision tree threshold -> contract/dilate?
 
-UPPER_CROP = 1./8
-LOWER_CROP = 1./2
-LEFT_CROP = 1./3
-RIGHT_CROP = 1./3
+def unscramble_box(box):
+    srt = np.argsort(box[:, 1])
+    btm1 = box[srt[0]]
+    btm2 = box[srt[1]]
 
-CROP_REGION = np.zeros(IMAGE_SIZE)
-CROP_REGION[int(IMAGE_SIZE[0] * UPPER_CROP):int(IMAGE_SIZE[0] * (1-LOWER_CROP)),
-    int(IMAGE_SIZE[1] * LEFT_CROP):int(IMAGE_SIZE[1] * (1-RIGHT_CROP))] = 1
+    top1 = box[srt[2]]
+    top2 = box[srt[3]]
+
+    bc = btm1[0] < btm2[0]
+    btm_l = btm1 if bc else btm2
+    btm_r = btm2 if bc else btm1
+
+    tc = top1[0] < top2[0]
+    top_l = top1 if tc else top2
+    top_r = top2 if tc else top1
+
+    return np.array([top_l, top_r, btm_r, btm_l])
     
-FULL_MASK = cv2.bitwise_or(FISHEYE_MASK, CROP_REGION)
+def extract_target_points(box):
+    # Find short sides, assign corners to variables
+    
+    # Known point order - one of [top_l, top_r], or [top_l, btm_l] is a long side
+    sides = np.array([[box[0], box[1]], [box[0], box[3]]])
+    long_side_ind = np.argmax(np.linalg.norm(np.array([box[0] - box[1], box[0] - box[3]]), ord=2, axis=1))
+    long_side = sides[long_side_ind,:]
+    
+    # Find center of rectangle
+    center = np.mean(np.array([box[0], box[2]]), axis=0)
+    
+    # Compute vector for long sides
+    long_side_vec = long_side[1] - long_side[0]
+    if long_side_vec[1] < 0:
+        long_side_vec *= -1
+    
+    # Return center modified in both directions
+    # First point - to move to, larger y coord (lower on screen)
+    # Second point - to face, higher y
+    return np.array([center + long_side_vec * 1/3, center - long_side_vec * 1/3], np.int32)
 
 class LineDetector(py_detector):
-
     def __init__(self):
         pass
-
     def reset(self):
         pass
-
-    def detect(self, images, vision):        
-        # Extract and copy first image to do work on
-        draw_image = images[vision_obj.DETECTOR]
-        height, width, _ = draw_image.shape
+    
+    def detect(self, images, vision):
         
-        _, preproc = cv2.GaussianBlur(cv2.cvtColor(
-                images[vision_obj.IMAGE].copy(),
-                cv2.COLOR_BGR2GRAY))
+        img = images[vision.IMAGE]
+        feedback_image = [vision.DETECTOR]
 
-        # Generate pure white image
-        work_image = 255 * np.ones(preproc.shape)
-        # To be overwritten by preprocessed image in locations not in mask
-        cv2.bitwise_and(preproc, preproc, work_image, mask=FULL_MASK)
-                
-        work_image = cv2.threshold(work_image, CV2_THRESHOLD, 255,
-                                   cv2.THRESH_BINARY)
-                        
-        contours, _ = cv2.findContours(work_image, 1, cv2.CV_CHAIN_APPROX_SIMPLE)
+        # Load and preprocess image
+        # preprocess steps: blur or erode/dilate, grayscale, threshold, mask to roi
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            
+        # blur (or erode/dilate)
+        img = cv2.GaussianBlur(img, (7, 7), 0)
         
+        # Convert to binary image
+        _, img = cv2.threshold(img, THRESH_VAL, 255, cv2.THRESH_BINARY)
+        
+        kernel = np.ones((3,3),np.uint8)
+        # Order? Necessary?
+        img = cv2.erode(img, kernel, iterations=5)
+        img = cv2.dilate(img, kernel, iterations=5)
+        
+        # Ignore all non-ROI points
+        mask = 255 * np.ones_like(img, dtype=np.uint8)
+        cv2.fillPoly(mask, ROI_VERTICES, 0)
+        img = cv2.bitwise_or(img, mask)
+        
+        # Use contours on negative of image for reasons
+        _, contours, _ = cv2.findContours(255-img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         if len(contours) > 0:
-            line = max(contours, key=cv2.contourArea)
-            center_x = int(line['m10']/line['m00'])
-            center_y = int(line['m01']/line['m00'])
-            
-            # Mark center
-            cv2.line(draw_image, (center_x,0), (center_x, height), (255,0,0), 1)
-            cv2.line(draw_image, (0,center_y), (width, center_y), (255,0,0), 1)
- 
-            # Display contour
-            cv2.drawContours(draw_image, contours, -1, (0, 255, 0), 1)
-                        
-            output_global_loc = vision.pixel_to_global(np.array([center_x, center_y]))
-            
-            # Return pixel to location
-            return [py_detection(Detection.LINE,
-                [output_global_loc, output_global_loc])]
+            contour = max(contours, key=cv2.contourArea)
         
-        else:
-            # TODO: No line in region - what to do?
+        # Unlikely null case - no contours?
+        else: 
             return []
+        
+        bounding_box = unscramble_box(np.int0(cv2.boxPoints(cv2.minAreaRect(contour))))
+        low_pt, high_pt = extract_target_points(bounding_box)
+        
+        # Draw original image, contour, crop, etc.
+        feedback_image = cv2.drawContours(feedback_image, contour, -1, (0, 0, 255))
+        feedback_image = cv2.polylines(feedback_image, ROI_VERTICES, True, (255, 0, 0))
+        feedback_image = cv2.polylines(feedback_image, np.array([bounding_box]), True, (0, 255, 0))
+        feedback_image = cv2.arrowedLine(feedback_image, tuple(low_pt), tuple(high_pt), (255,255,255))
+
+        ret_low = vision.pixel_to_global(low_pt)
+        ret_high = vision.pixel_to_global(high_pt)
+       
+        return [py_detection(Detection.LINE, ret_low),
+            py_detection(Detection.LINE, ret_high)]
