@@ -12,9 +12,9 @@ bool MoveTestManager::start() {
 // Move to a point
 bool MoveTestManager::testMove() {
     robot_pkg::MotionTarget target;
-    target.pos_x = 0;
+    target.pos_x = 1;
     target.pos_y = 0;
-    target.yaw = M_PI;
+    target.yaw = 0;
 
     Motion::moveTo(target);
 
@@ -23,5 +23,37 @@ bool MoveTestManager::testMove() {
     while (Motion::getCurrentState().at_target == false) {
         ros::Duration(0.1).sleep();
     }
+
+    ros::Duration(1).sleep();
+
+    target.pos_x = 1;
+    target.pos_y = 1;
+    target.yaw = M_PI/2;
+    Motion::moveTo(target);
+    ros::Duration(0.5).sleep();
+    while (Motion::getCurrentState().at_target == false) {
+        ros::Duration(0.1).sleep();
+    }
+
+    ros::Duration(1).sleep();
+    target.pos_x = 0;
+    target.pos_y = 1;
+    target.yaw = M_PI;
+    Motion::moveTo(target);
+    ros::Duration(0.5).sleep();
+    while (Motion::getCurrentState().at_target == false) {
+        ros::Duration(0.1).sleep();
+    }
+
+    ros::Duration(1).sleep();
+    target.pos_x = 0;
+    target.pos_y = 0;
+    target.yaw = 0;
+    Motion::moveTo(target);
+    ros::Duration(0.5).sleep();
+    while (Motion::getCurrentState().at_target == false) {
+        ros::Duration(0.1).sleep();
+    } 
+
     return done(true);
 }

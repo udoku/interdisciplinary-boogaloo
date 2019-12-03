@@ -3,7 +3,7 @@
     <arg name="RECORD" />
     <arg name="LOG_FILE" />
     <node pkg="rosbag" type="record" name="rosbag_record"
-      args="record --lz4 -O $(arg LOG_FILE) /robot_state /hardware_reset /motion_target /servo_command /detections /images/camera"
+      args="record --lz4 -O $(arg LOG_FILE) /killswitch /ultrasonic_ping /images/camera"
       if="$(arg RECORD)">
     </node>
 

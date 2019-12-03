@@ -64,12 +64,10 @@ int CommanderProcess::run() {
         System::setLedDisabled();
 
         // Wait for the kill switch
-        if (!getenv("IGNORE_HARDWARE")) {
-            ROS_INFO("Kill switch is currently pressed");
-            while (Motion::getCurrentState().killed) {
-                ros::Duration(0.1).sleep();
-                ros::spinOnce();
-            }
+        ROS_INFO("Kill switch is currently pressed");
+        while (Motion::getCurrentState().killed) {
+            ros::Duration(0.1).sleep();
+            ros::spinOnce();
         }
 
         System::setLedArmed();
