@@ -45,7 +45,7 @@ const int WHEEL_IDS[3] = {0, 1, 2};
 const int PIVOT_IDS[3] = {3, 4, 5};
 const int DROPPER_ID = 6;
 
-const double STRAIGHT_SETPOINTS[3] = {53, 53, -18};
+const double STRAIGHT_SETPOINTS[3] = {53, 61, -23};
 const double STRAFE_SETPOINTS[3] = {-55, -54, 82};
 const double TURNING_SETPOINTS[3] = {-55, 10, 10};
 
