@@ -46,5 +46,19 @@ bool LineManager::followLine() {
     }
 
     ROS_INFO("Reached end of line!");
+
+    // Move forward a bit to go to next table
+    robot_pkg::MotionTarget local_target;
+    local_target.pos_x = .2;
+    local_target.pos_y = 0;
+    target_ = Motion::localToGlobal(front_point_local);
+    Motion::moveTo(target_);
+
+    ros::Duration(.5).sleep();
+
+    while (Motion::getCurrentState().at_target == false) {
+        ros::Duration(.1).sleep();
+    }
+
     return done(true);
 }

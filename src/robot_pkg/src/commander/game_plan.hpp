@@ -52,11 +52,8 @@ void setupTasks() {
     tasks["task4"] = TaskPtr(tasks["obstacle"]);
     tasks["task1"] = TaskPtr(tasks["mobility"]);
     tasks["task2"] = TaskPtr(tasks["line"]);
-    tasks["escape"] = TaskPtr(new TaskSeq({tasks["start"],
-                                           tasks["task1"],
-                                           tasks["task2"],
-                                           tasks["task3"],
-                                           tasks["task4"],
+    tasks["escape"] = TaskPtr(new TaskSeq({tasks["line"],
+                                           tasks["obstacle"],
                                            tasks["end"]}));
 }
 #endif
