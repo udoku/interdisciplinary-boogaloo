@@ -75,6 +75,7 @@ robot_pkg::MotionTarget localToGlobal(robot_pkg::MotionTarget local) {
     global.yaw = g_robot_state.yaw;
     global.pos_x = local.pos_x * cos(global.yaw) - local.pos_y * sin(global.yaw) + g_robot_state.pos_x;
     global.pos_y = local.pos_x * sin(global.yaw) + local.pos_y * cos(global.yaw) + g_robot_state.pos_y;
+    global.yaw += local.yaw;
     return global;
 }
 

@@ -55,7 +55,7 @@ bool ObstacleManager::avoidObstacles() {
         
         target_ = Motion::localToGlobal(local_target);
 
-        // Motion::moveTo(target_);
+        Motion::moveTo(target_);
 
         ros::Duration(.5).sleep();
 
@@ -63,7 +63,7 @@ bool ObstacleManager::avoidObstacles() {
             ros::Duration(.1).sleep();
         }
 
-        ros::Duration(2).sleep();
+        ros::Duration(5).sleep();
     }
 
     ROS_INFO("Reached end of line!");
@@ -72,7 +72,7 @@ bool ObstacleManager::avoidObstacles() {
 
 bool ObstacleManager::isDetAtPos(vector<robot_pkg::Detection>& dets, double x_pos, double y_pos, double rad) {
     for (robot_pkg::Detection det : dets) {
-        if (pow(target_.pos_x-det.pos_x, 2) + pow(target_.pos_y-det.pos_y, 2) < pow(rad, 2)) {
+        if (pow(x_pos-det.pos_x, 2) + pow(y_pos-det.pos_y, 2) < pow(rad, 2)) {
             return true;
         }
     }
