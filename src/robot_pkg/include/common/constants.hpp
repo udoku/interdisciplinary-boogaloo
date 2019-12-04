@@ -32,6 +32,7 @@ const double MOBILITY_UPDATE_RATE_HZ = 10;
 const double MAX_POS_ERROR = 0.01; // meters
 const double MAX_ANG_ERROR = 0.1; // radians
 
+const double HIGH_SPEED = 0.40; // meters/s
 const double MAX_SPEED = 0.22; // meters/s
 const double MAX_TURN_SPEED = 2.0; // radians/s
 

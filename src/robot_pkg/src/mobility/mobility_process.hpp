@@ -41,7 +41,7 @@ class MobilityProcess {
 
     void stopMoving();
     void turnToAngle(double angle);
-    void moveStraight(double dir);
+    void moveStraight();
 
     void setDropper(int index);
 

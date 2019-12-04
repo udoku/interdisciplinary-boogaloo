@@ -5,3 +5,6 @@ float64 pos_x
 float64 pos_y
 
 float64 yaw
+
+bool reversed
+bool high_speed
