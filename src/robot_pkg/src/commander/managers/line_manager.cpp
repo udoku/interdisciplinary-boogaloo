@@ -22,8 +22,8 @@ bool LineManager::followLine() {
 
         // No dets, cry. TODO search for line
         if (dets.size() == 0) {
-            ROS_WARN("No line found, failing task");
-            return done(false);
+            ROS_WARN("No line found, succeeding task");
+            return done(true);
         }
 
         robot_pkg::Detection det = dets[0];
