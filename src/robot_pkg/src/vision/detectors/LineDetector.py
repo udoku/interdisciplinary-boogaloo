@@ -14,7 +14,7 @@ ISCV3 = cv2.__version__[0]=="3"
 # TUNE ME
 ROI_VERTICES = np.array([[(110, 150), (150, 330), (490, 330), (530, 150)]], np.int32)
 # TUNE ME
-THRESH_VAL = 60
+THRESH_VAL = 40
 
 # If you switch to the DecisionTree thresholding:
 # Blur -> decision tree threshold -> contract/dilate?

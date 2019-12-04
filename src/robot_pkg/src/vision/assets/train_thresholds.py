@@ -94,11 +94,11 @@ def main():
 
     zeros = np.array([np.array([0]) for _ in range(sparseNegatives.shape[0])], dtype=np.uint8)
 
-    image = np.concatenate([image, sparseNegatives], axis=0)
-    filter = np.concatenate([filter, zeros], axis=0)
+    # image = np.concatenate([image, sparseNegatives], axis=0)
+    # filter = np.concatenate([filter, zeros], axis=0)
 
 
-    classifier = DecisionTreeClassifier(max_depth=20, min_samples_leaf=100)
+    classifier = DecisionTreeClassifier(max_depth=10, min_samples_leaf=200)
 
     print('Initialized classifier. Training...')
 
