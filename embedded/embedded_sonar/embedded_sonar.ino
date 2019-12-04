@@ -67,6 +67,7 @@ void setup() {
 
 void loop() {
   nh.spinOnce();
-  read_sensor();
+  // read_sensor();
   kill_update();
+  delay(100);
 }
