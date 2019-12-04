@@ -13,5 +13,6 @@ float64 confidence #0-1 value for % confidence
 int32 DEMO                  = 0
 int32 LINE                  = 1
 int32 OBSTACLE              = 2
+int32 CIRCLE                = 3
 
-int32 NUM_DETECTION_TYPES   = 3
+int32 NUM_DETECTION_TYPES   = 4

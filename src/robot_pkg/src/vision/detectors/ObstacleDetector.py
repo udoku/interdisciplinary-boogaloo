@@ -9,6 +9,8 @@ from vision_utils import *
 from robot_pkg.msg import Detection
 import pickle
 
+from ellipse_detector_lib import detect_ellipse as find_ellipse
+
 ISCV3 = cv2.__version__[0]=="3"
 
 classifier = None
@@ -25,6 +27,20 @@ class ObstacleDetector(py_detector):
         pass
 
     def detect(self, images, vision):
+        return self.detect_ellipse(images, vision) + self.detect_obstacle(images, vision)
+
+    def detect_ellipse(self, images, vision):
+        img = images[vision.IMAGE]
+
+        ellipse, _, _, _ = find_ellipse(img)
+
+        images[vision.DETECTOR] = cv2.ellipse(img, ellipse, (255,255,0), 3)
+
+        return [py_detection(Detection.CIRCLE, vision.pixel_to_global(ellipse[0]))]
+
+
+
+    def detect_obstacle(self, images, vision):
         print('obstacle detecting')
         global classifier
 

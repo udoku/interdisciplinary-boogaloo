@@ -66,7 +66,7 @@ bool ObstacleManager::findWall() {
 }
 
 bool ObstacleManager::avoidObstacles() {
-    vector<robot_pkg::Detection> dets;
+    vector<robot_pkg::Detection> dets, circ_dets;
     ros::Duration(1).sleep();
 
     while (true) {
@@ -95,6 +95,7 @@ bool ObstacleManager::avoidObstacles() {
         local_target.yaw = 0;
 
         Vision::waitVisionData(robot_pkg::Detection::OBSTACLE, 1, &dets);
+        Vision::waitVisionData(robot_pkg::Detection::CIRCLE, 0.3, &circ_dets);
 
         // Create side point bubble
         robot_pkg::MotionTarget side_point_local;
@@ -128,7 +129,7 @@ bool ObstacleManager::avoidObstacles() {
             wall_back_ = wall_mid_;
             wall_mid_ = wall_front_;
             wall_front_ = false;
-            local_target.pos_x = front_point_local.pos_x;
+            local_target.pos_x = front_point_local.pos_x;            
         }
 
         target_ = Motion::localToGlobal(local_target);
@@ -141,11 +142,39 @@ bool ObstacleManager::avoidObstacles() {
             ros::Duration(.1).sleep();
         }
 
+        if (!circ_dets.empty()) {
+            return call(bind(&ObstacleManager::park, this));
+        }
+
         ros::Duration(2).sleep();
     }
 
     ROS_INFO("Reached end of line!");
     return done(true);
+}
+
+void ObstacleManager::park() {
+    vector<robot_pkg::Detection> circ_dets;
+
+    while (true) {
+        Vision::waitVisionData(robot_pkg::Detection::CIRCLE, 10, &circ_dets);
+
+        if (!circ_dets.empty()) {
+            robot_pkg::MotionTarget targ;
+            targ.pos_x = circ_dets[0].pos_x;
+            targ.pos_y = circ_dets[0].pos_y;
+
+            robot_pkg::RobotState rstate = Motion::getCurrentState();
+            double dist = pow(rstate.pos_x - circ_dets[0].pos_x, 2) + pow(rstate.pos_y - circ_dets[0].pos_y, 2);
+
+            if (dist < 0.05) {
+                return done(true);
+            }
+
+            Motion::moveTo(targ);
+        }
+    }
+
 }
 
 bool ObstacleManager::isDetAtPos(vector<robot_pkg::Detection>& dets, double x_pos, double y_pos, double rad) {

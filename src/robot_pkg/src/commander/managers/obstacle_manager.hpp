@@ -16,6 +16,7 @@ class ObstacleManager : public StateMachine {
     
     bool findWall();
     bool avoidObstacles();
+    bool park();
     bool isDetAtPos(vector<robot_pkg::Detection>& dets, double x_pos, double y_pos, double rad);
 
   public:
