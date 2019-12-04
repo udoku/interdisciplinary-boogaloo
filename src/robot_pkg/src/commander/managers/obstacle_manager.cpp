@@ -153,7 +153,7 @@ bool ObstacleManager::avoidObstacles() {
     return done(true);
 }
 
-void ObstacleManager::park() {
+bool ObstacleManager::park() {
     vector<robot_pkg::Detection> circ_dets;
 
     while (true) {
