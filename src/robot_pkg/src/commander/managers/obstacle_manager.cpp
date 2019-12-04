@@ -9,11 +9,62 @@ bool ObstacleManager::start() {
     target_.pos_x = Motion::getCurrentState().pos_x;
     target_.pos_y = Motion::getCurrentState().pos_y;
     target_.yaw = Motion::getCurrentState().yaw;
+    wall_front_ = false;
+    wall_mid_ = false;
+    wall_back_ = false;
     Vision::setDetector(robot_pkg::Detector::OBSTACLE_DETECTOR);
+    return call(bind(&ObstacleManager::findWall, this));
+}
+
+bool ObstacleManager::findWall() {
+    vector<robot_pkg::Detection> dets;
+    ros::Duration(1).sleep();
+    target_.yaw -= M_PI/2;
+
+    Motion::moveTo(target_);
+
+    ros::Duration(.5).sleep();
+
+    while (Motion::getCurrentState().at_target == false) {
+        ros::Duration(.1).sleep();
+    }
+
+    while (true) {
+        Vision::waitVisionData(robot_pkg::Detection::OBSTACLE, 10, &dets);
+
+        // Create front point bubble
+        robot_pkg::MotionTarget front_point_local;
+        front_point_local.pos_x = .12;
+        front_point_local.pos_y = 0;
+        robot_pkg::MotionTarget front_point = Motion::localToGlobal(front_point_local);
+        double front_point_rad = .125;
+
+        if (isDetAtPos(dets, front_point.pos_x, front_point.pos_y, front_point_rad)) {
+            // Turn left
+            ROS_INFO("Something in front! Found obstacle");
+            wall_front_ = true;
+            wall_mid_ = true;
+            wall_back_ = true;
+            break;
+        }
+
+        ROS_INFO("Nothing in front. Moving forward");
+        robot_pkg::MotionTarget local_target;
+        local_target.pos_x = front_point_local.pos_x;
+        target_ = Motion::localToGlobal(local_target);
+
+        Motion::moveTo(target_);
+
+        while (Motion::getCurrentState().at_target == false) {
+            ros::Duration(.1).sleep();
+        }
+        ros::Duration(5).sleep();
+    }
+
+    ROS_INFO("Changing to avoid");
     return call(bind(&ObstacleManager::avoidObstacles, this));
 }
 
-// Dispatch while trying to get close to the bins
 bool ObstacleManager::avoidObstacles() {
     vector<robot_pkg::Detection> dets;
     ros::Duration(1).sleep();
@@ -35,6 +86,9 @@ bool ObstacleManager::avoidObstacles() {
         robot_pkg::MotionTarget front_point = Motion::localToGlobal(front_point_local);
         double front_point_rad = .125;
 
+        // Checking if wall in front
+        wall_front_ = isDetAtPos(dets, side_point.pos_x, side_point.pos_y, side_point_rad);
+
         robot_pkg::MotionTarget local_target;
         // If det in front
         if (isDetAtPos(dets, front_point.pos_x, front_point.pos_y, front_point_rad)) {
@@ -42,7 +96,7 @@ bool ObstacleManager::avoidObstacles() {
             ROS_INFO("Something in front! Turning left");
             local_target.yaw = M_PI/8;
         }
-        else if (!isDetAtPos(dets, side_point.pos_x, side_point.pos_y, side_point_rad)) {
+        else if (!wall_front_ && !wall_mid_ && !wall_back_) {
             // Turn right
             ROS_INFO("Nothing to right! Turning right");
             local_target.yaw = -M_PI/8;
@@ -50,6 +104,9 @@ bool ObstacleManager::avoidObstacles() {
         else {
             // Go straight
             ROS_INFO("Vroom vroom");
+            wall_back_ = wall_mid_;
+            wall_mid_ = wall_front_;
+            wall_front_ = false;
             local_target.pos_x = side_point_local.pos_x;
         }
         
