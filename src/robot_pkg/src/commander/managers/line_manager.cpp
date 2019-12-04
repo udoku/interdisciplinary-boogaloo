@@ -51,7 +51,7 @@ bool LineManager::followLine() {
     robot_pkg::MotionTarget local_target;
     local_target.pos_x = .2;
     local_target.pos_y = 0;
-    target_ = Motion::localToGlobal(front_point_local);
+    target_ = Motion::localToGlobal(local_target);
     Motion::moveTo(target_);
 
     ros::Duration(.5).sleep();
