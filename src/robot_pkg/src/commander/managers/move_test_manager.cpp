@@ -12,9 +12,12 @@ bool MoveTestManager::start() {
 // Move to a point
 bool MoveTestManager::testMove() {
     robot_pkg::MotionTarget target;
-    target.pos_x = 1;
+    target.pos_x = 2;
     target.pos_y = 0;
-    target.yaw = M_PI;
+    target.yaw = 0;
+    target.high_speed = true;
+    target.reversed = false;
+
 
     Motion::moveTo(target);
 

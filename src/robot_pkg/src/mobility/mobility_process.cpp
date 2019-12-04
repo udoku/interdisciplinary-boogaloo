@@ -162,7 +162,7 @@ void MobilityProcess::updateMobility(const ros::TimerEvent& time) {
         }
         else {
             // Command to go straight
-            moveStraight(1);
+            moveStraight();
             ROS_INFO("Moving forward");
         }
     }
@@ -211,6 +211,9 @@ double MobilityProcess::angleToTargetPos() {
     double delta_x = current_target_.pos_x - current_state_.pos_x;
     double delta_y = current_target_.pos_y - current_state_.pos_y;
     double req_heading = atan2(delta_y, delta_x);
+    if (current_target_.reversed) {
+        req_heading += M_PI;
+    }
     double angle = req_heading - current_state_.yaw;
     ROS_INFO("Angle to target pos: %f", angle);
     while (angle > M_PI) {
@@ -302,18 +305,20 @@ void MobilityProcess::turnToAngle(double angle) {
     current_state_.angular_vel = direction * MAX_TURN_SPEED;
 }
 
-void MobilityProcess::moveStraight(double dir) {
+void MobilityProcess::moveStraight() {
     assert(wheel_mode_ == WheelMode::STRAIGHT);
+    double motor_speed = (current_target_.high_speed) ? HIGH_SPEED : MAX_SPEED;
+    double dir = (current_target_.reversed) ? -1 : 1;
     for (int i = 0; i < 3; i++) {
         robot_pkg::ServoCommand cmd;
         cmd.servo_id = WHEEL_IDS[i];
-        cmd.value = MAX_SPEED * SPEED_TO_POWER * STRAIGHT_DIRECTIONS[i];
+        cmd.value = dir * motor_speed * SPEED_TO_POWER * STRAIGHT_DIRECTIONS[i];
         cmd.value += SERVO_COMMAND_ZERO;
         servo_command_pub_.publish(cmd);
     }
-    current_state_.vel_x = MAX_SPEED * cos(current_state_.yaw);
-    current_state_.vel_y = MAX_SPEED * sin(current_state_.yaw);
-    straight_vel_ = MAX_SPEED;
+    current_state_.vel_x = dir * motor_speed * cos(current_state_.yaw);
+    current_state_.vel_y = dir * motor_speed * sin(current_state_.yaw);
+    straight_vel_ = motor_speed;
 }
 
 void MobilityProcess::setDropper(int index) {

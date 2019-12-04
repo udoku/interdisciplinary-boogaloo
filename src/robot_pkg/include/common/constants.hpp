@@ -32,13 +32,14 @@ const double MOBILITY_UPDATE_RATE_HZ = 10;
 const double MAX_POS_ERROR = 0.01; // meters
 const double MAX_ANG_ERROR = 0.1; // radians
 
+const double HIGH_SPEED = 0.40; // meters/s
 const double MAX_SPEED = 0.22; // meters/s
 const double MAX_TURN_SPEED = 2.0; // radians/s
 
 const double SPEED_TO_POWER = 68.18; // multiply by speed to get servo power
 const double TURN_TO_SPEED = 0.063; // multiply by rad/s to get necessary m/s of wheels
 
-const double TRANSITION_WAIT_TIME = 1.0; // seconds
+const double TRANSITION_WAIT_TIME = 0.5; // seconds
 const double DROP_WAIT_TIME = 1.5; // seconds
 
 const int WHEEL_IDS[3] = {0, 1, 2};

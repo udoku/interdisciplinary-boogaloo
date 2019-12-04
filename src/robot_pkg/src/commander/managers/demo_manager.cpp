@@ -6,7 +6,7 @@ string DemoManager::getName() { return "Demo"; }
 
 bool DemoManager::start() {
     ROS_INFO("Starting demo w/ demo detector");
-    Vision::setDetector(robot_pkg::Detector::LINE_DETECTOR);
+    Vision::setDetector(robot_pkg::Detector::OBSTACLE_DETECTOR);
     return call(bind(&DemoManager::printMessage, this, 5));
 }
 
