@@ -27,6 +27,8 @@ robot_pkg::RobotState getCurrentState();
 
 void moveTo(robot_pkg::MotionTarget msg);
 
+robot_pkg::MotionTarget localToGlobal(robot_pkg::MotionTarget local);
+
 } // namespace Motion
 
 /** Advanced mobility code (for example, search patterns) */
