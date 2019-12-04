@@ -89,7 +89,7 @@ bool ObstacleManager::avoidObstacles() {
                 ros::Duration(.1).sleep();
             }
 
-            ros::Duration(3).sleep();
+            ros::Duration(2).sleep();
 	}
 	
 	local_target.yaw = 0;
@@ -141,7 +141,7 @@ bool ObstacleManager::avoidObstacles() {
             ros::Duration(.1).sleep();
         }
 
-        ros::Duration(3).sleep();
+        ros::Duration(2).sleep();
     }
 
     ROS_INFO("Reached end of line!");
