@@ -8,68 +8,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.spatial import ConvexHull
 
-def m_syms(m):
-    """
-    returns all the square symmetries of a matrix
-    """
-    mt = np.transpose(m)
-    ret = [m]
-    for i in range(3):
-        m = np.rot90(m)
-        ret += [m]
-    ret += [mt]
-    for i in range(3):
-        mt = np.rot90(mt)
-        ret += [mt]
-
-    return ret
-
-def detect_junctions(img):
-    """
-    This function detects junctions in skeletonized binary images
-    """
-    kernels = [
-        # .+.
-        # .++
-        # .+.
-        m_syms(np.array([
-            [-1, 1,-1],
-            [-1, 1, 1],
-            [-1, 1,-1]
-        ], np.int8)),
-        # ..+
-        # .+.
-        # +.+
-        m_syms(np.array([
-            [-1,-1, 1],
-            [-1, 1,-1],
-            [ 1,-1, 1]
-        ], np.int8)),
-        # .+.
-        # .++
-        # +..
-        m_syms(np.array([
-            [-1, 1,-1],
-            [-1, 1, 1],
-            [ 1,-1,-1]
-        ], np.int8)),
-        # +..
-        # .++
-        # +..
-        m_syms(np.array([
-            [ 1,-1,-1],
-            [-1, 1, 1],
-            [ 1,-1,-1]
-        ], np.int8)),
-    ]
-    
-    flat_kernels = [x for y in kernels for x in y]
-
-    found = np.zeros(img.shape, np.uint8)
-    for k in flat_kernels:
-        found = found | cv2.morphologyEx(img, cv2.MORPH_HITMISS, k)
-    return found
-
 def laplacian_smoothing(c, n=1, l=1.0):
     """
     This function applies laplacian smoothing to a contour
