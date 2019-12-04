@@ -71,14 +71,14 @@ bool ObstacleManager::avoidObstacles() {
 
     while (true) {
         Vision::waitVisionData(robot_pkg::Detection::OBSTACLE, 1, &dets);
- 
+
 	cout << wall_front_ << " " << wall_mid_ << " " << wall_back_ << endl;
         robot_pkg::MotionTarget local_target;
         if (!wall_mid_) {// && !wall_back_) {
             // Turn right
             ROS_INFO("Nothing to right! Turning right");
             local_target.yaw = -M_PI/2;
-            
+
 	    target_ = Motion::localToGlobal(local_target);
 
             Motion::moveTo(target_);
@@ -91,11 +91,11 @@ bool ObstacleManager::avoidObstacles() {
 
             ros::Duration(2).sleep();
 	}
-	
+
 	local_target.yaw = 0;
 
         Vision::waitVisionData(robot_pkg::Detection::OBSTACLE, 1, &dets);
-        
+
 	// Create side point bubble
         robot_pkg::MotionTarget side_point_local;
         side_point_local.pos_x = .18;
@@ -112,7 +112,7 @@ bool ObstacleManager::avoidObstacles() {
 
         // Checking if wall in front
         wall_front_ = isDetAtPos(dets, side_point.pos_x, side_point.pos_y, side_point_rad);
-	
+
 	// If det in front
 	if (isDetAtPos(dets, front_point.pos_x, front_point.pos_y, front_point_rad)) {
             // Turn left
@@ -128,9 +128,9 @@ bool ObstacleManager::avoidObstacles() {
             wall_back_ = wall_mid_;
             wall_mid_ = wall_front_;
             wall_front_ = false;
-            local_target.pos_x = side_point_local.pos_x * (3./4.);
+            local_target.pos_x = front_point_local.pos_x;
         }
-        
+
         target_ = Motion::localToGlobal(local_target);
 
         Motion::moveTo(target_);
