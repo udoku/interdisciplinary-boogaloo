@@ -8,8 +8,8 @@ class PlateauManager : public StateMachine {
   bool start();
 
   private:
-    const string message_;
-    bool printMessage(int n_times);
+    robot_pkg::MotionTarget target_;
+    bool go();
 
   public:
     PlateauManager();
