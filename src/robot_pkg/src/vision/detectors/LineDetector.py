@@ -78,8 +78,8 @@ class LineDetector(py_detector):
         img = cv2.GaussianBlur(img, (7, 7), 0)
         
         # Convert to binary image
-        _, img = cv2.threshold(img, THRESH_VAL, 255, cv2.THRESH_BINARY)
-        
+        # _, img = cv2.threshold(img, THRESH_VAL, 255, cv2.THRESH_BINARY)
+        img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 127, 20) 
         kernel = np.ones((3,3),np.uint8)
         # Order? Necessary?
         img = cv2.erode(img, kernel, iterations=5)

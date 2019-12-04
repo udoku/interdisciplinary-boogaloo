@@ -58,7 +58,7 @@ bool ObstacleManager::findWall() {
         while (Motion::getCurrentState().at_target == false) {
             ros::Duration(.1).sleep();
         }
-        ros::Duration(5).sleep();
+        ros::Duration(3).sleep();
     }
 
     ROS_INFO("Changing to avoid");
@@ -70,9 +70,33 @@ bool ObstacleManager::avoidObstacles() {
     ros::Duration(1).sleep();
 
     while (true) {
-        Vision::waitVisionData(robot_pkg::Detection::OBSTACLE, 10, &dets);
+        Vision::waitVisionData(robot_pkg::Detection::OBSTACLE, 1, &dets);
+ 
+	cout << wall_front_ << " " << wall_mid_ << " " << wall_back_ << endl;
+        robot_pkg::MotionTarget local_target;
+        if (!wall_mid_) {// && !wall_back_) {
+            // Turn right
+            ROS_INFO("Nothing to right! Turning right");
+            local_target.yaw = -M_PI/2;
+            
+	    target_ = Motion::localToGlobal(local_target);
 
-        // Create side point bubble
+            Motion::moveTo(target_);
+
+            ros::Duration(.5).sleep();
+
+            while (Motion::getCurrentState().at_target == false) {
+                ros::Duration(.1).sleep();
+            }
+
+            ros::Duration(3).sleep();
+	}
+	
+	local_target.yaw = 0;
+
+        Vision::waitVisionData(robot_pkg::Detection::OBSTACLE, 1, &dets);
+        
+	// Create side point bubble
         robot_pkg::MotionTarget side_point_local;
         side_point_local.pos_x = .18;
         side_point_local.pos_y = -.18;
@@ -88,18 +112,15 @@ bool ObstacleManager::avoidObstacles() {
 
         // Checking if wall in front
         wall_front_ = isDetAtPos(dets, side_point.pos_x, side_point.pos_y, side_point_rad);
-
-        robot_pkg::MotionTarget local_target;
-        // If det in front
-        if (isDetAtPos(dets, front_point.pos_x, front_point.pos_y, front_point_rad)) {
+	
+	// If det in front
+	if (isDetAtPos(dets, front_point.pos_x, front_point.pos_y, front_point_rad)) {
             // Turn left
+	    wall_back_ = true;
+	    wall_mid_ = true;
+	    wall_front_ = true;
             ROS_INFO("Something in front! Turning left");
             local_target.yaw = M_PI/8;
-        }
-        else if (!wall_front_ && !wall_mid_ && !wall_back_) {
-            // Turn right
-            ROS_INFO("Nothing to right! Turning right");
-            local_target.yaw = -M_PI/8;
         }
         else {
             // Go straight
@@ -107,7 +128,7 @@ bool ObstacleManager::avoidObstacles() {
             wall_back_ = wall_mid_;
             wall_mid_ = wall_front_;
             wall_front_ = false;
-            local_target.pos_x = side_point_local.pos_x;
+            local_target.pos_x = side_point_local.pos_x * (3./4.);
         }
         
         target_ = Motion::localToGlobal(local_target);
@@ -120,7 +141,7 @@ bool ObstacleManager::avoidObstacles() {
             ros::Duration(.1).sleep();
         }
 
-        ros::Duration(5).sleep();
+        ros::Duration(3).sleep();
     }
 
     ROS_INFO("Reached end of line!");

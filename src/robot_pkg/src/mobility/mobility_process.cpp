@@ -47,18 +47,19 @@ void MobilityProcess::processKillswitch(std_msgs::Bool msg) {
 
 void MobilityProcess::handleMotionTarget(robot_pkg::MotionTarget msg) {
     // If X or Y change, send to beginning
-    if (current_target_.pos_x != msg.pos_x || 
-        current_target_.pos_y != msg.pos_y) {
-        
-        current_state_.at_target = false;
+    if (current_state_.pos_x != msg.pos_x || 
+        current_state_.pos_y != msg.pos_y) {
+        ROS_INFO("mob: full target retry");
+	current_state_.at_target = false;
 
         move_mode_ = MoveMode::TURNING_TO_POS;
         current_target_ = msg;
         dist_to_travel_ = distToTarget();
     }
     // If just angle has changed and we are already at the target, just make it yaw
-    else if (current_target_.yaw != msg.yaw && move_mode_ == MoveMode::DONE) {
-        current_state_.at_target = false;
+    else if (current_state_.yaw != msg.yaw && move_mode_ == MoveMode::DONE) {
+        ROS_INFO("mob: just angle shortcut");
+	current_state_.at_target = false;
         move_mode_ = MoveMode::TURNING_TO_ANGLE;
     }
     current_target_ = msg;
@@ -108,7 +109,6 @@ void MobilityProcess::handleDropCommand(std_msgs::Bool msg) {
 void MobilityProcess::updateMobility(const ros::TimerEvent& time) {
     // If killed, don't do anything besides publish
     if (current_state_.killed) {
-        ROS_INFO("Robot is killed, just publishing state");
         robot_state_pub_.publish(current_state_);
         return;
     }
@@ -129,19 +129,16 @@ void MobilityProcess::updateMobility(const ros::TimerEvent& time) {
         current_state_.at_target = false;
         // If we are facing the right angle, stop
         if (abs(angleToTargetPos()) < MAX_ANG_ERROR) {
-            ROS_INFO("Stopped turning");
             stopMoving();
             move_mode_ = MoveMode::MOVING;
         }
         // Make sure wheels are oriented to turn
         else if (wheel_mode_ != WheelMode::TURNING) {
-            ROS_INFO("Moving wheels to turn");
             setWheelMode(WheelMode::TURNING);
         }
         else{
             // Command to turn to angle
             turnToAngle(angleToTargetPos());
-            ROS_INFO("Turning to face target");
         }
     }
 
@@ -151,19 +148,16 @@ void MobilityProcess::updateMobility(const ros::TimerEvent& time) {
         current_state_.at_target = false;
         // If we are close, stop
         if (dist_to_travel_ <= 0) {
-            ROS_INFO("Stopped moving forward");
             stopMoving();
             move_mode_ = MoveMode::TURNING_TO_ANGLE;
         }
         // Make sure wheels are oriented to go straight
         else if (wheel_mode_ != WheelMode::STRAIGHT) {
-            ROS_INFO("Straightening wheels");
             setWheelMode(WheelMode::STRAIGHT);
         }
         else {
             // Command to go straight
             moveStraight();
-            ROS_INFO("Moving forward");
         }
     }
 
@@ -173,26 +167,22 @@ void MobilityProcess::updateMobility(const ros::TimerEvent& time) {
         current_state_.at_target = false;
         // If we are close, stop
         if (abs(angleToTargetAngle()) < MAX_ANG_ERROR) {
-            ROS_INFO("Stopped turning");
             stopMoving();
             move_mode_ = MoveMode::DONE;
         }
         // Make sure wheels are oriented to turn
         else if (wheel_mode_ != WheelMode::TURNING) {
-            ROS_INFO("Turning to face final yaw target");
             setWheelMode(WheelMode::TURNING);
         }
         else {
             // Command to turn
             turnToAngle(angleToTargetAngle());
-            ROS_INFO("Turning to face yaw target");
         }
     }
 
     if (move_mode_ == MoveMode::DONE) {
         stopMoving();
         current_state_.at_target = true;
-        ROS_INFO("At the target now, stop moving");
     }
 
     // Update all positions
@@ -215,7 +205,6 @@ double MobilityProcess::angleToTargetPos() {
         req_heading += M_PI;
     }
     double angle = req_heading - current_state_.yaw;
-    ROS_INFO("Angle to target pos: %f", angle);
     while (angle > M_PI) {
         angle -= 2*M_PI;
     }
@@ -227,7 +216,6 @@ double MobilityProcess::angleToTargetPos() {
 
 double MobilityProcess::angleToTargetAngle() {
     double angle = current_target_.yaw - current_state_.yaw;
-    ROS_INFO("Angle to target angle: %f", angle);
     while (angle > M_PI) {
         angle -= 2*M_PI;
     }
@@ -241,7 +229,6 @@ double MobilityProcess::distToTarget() {
     double delta_x = current_target_.pos_x - current_state_.pos_x;
     double delta_y = current_target_.pos_y - current_state_.pos_y;
     double dist = sqrt(pow(delta_x, 2) + pow(delta_y, 2));
-    ROS_INFO("Dist away from target: %f", dist);
     return dist;
 }
 
