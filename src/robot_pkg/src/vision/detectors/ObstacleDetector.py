@@ -32,24 +32,28 @@ class ObstacleDetector(py_detector):
         binary = treeThreshold(img, classifier)
 
         kernel = np.ones((3,3),np.uint8)
-        binary = cv2.erode(binary,kernel,iterations = 5)
-        binary = cv2.dilate(binary,kernel,iterations = 5)
+        binary = cv2.erode(binary,kernel,iterations = 2)
+        binary = cv2.dilate(binary,kernel,iterations = 2)
 
-        feedback_image = cv2.cvtColor(binary, cv2.COLOR_GRAY2BGR)
-
+        feedback_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        feedback_image = cv2.cvtColor(feedback_image, cv2.COLOR_GRAY2BGR)
+        
         _, contours, hierarchy = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        good_color = (0,255,255) # cyan
+        good_color = (0,255,0) # green
 
         if contours == []:
             images[vision.DETECTOR] = feedback_image
             return []
 
-        cv2.drawContours(feedback_image, contours, -1, good_color, 2)
+        cv2.drawContours(feedback_image, contours, -1, good_color, -1)
 
         pts = []
         for cont in contours:
+            last_px = np.array([0,0])
             for pt in cont:
-                pts.append(pt)
+                if np.linalg.norm(pt[0] - last_px) > 15:
+                    last_px = pt[0]
+                    pts.append(pt[0])
 
         print('number of obstacle pixels: {}', len(pts))
 
@@ -57,4 +61,4 @@ class ObstacleDetector(py_detector):
 
         images[vision.DETECTOR] = feedback_image
 
-        return [py_detection(Detection.OBSTACLE, goals)]
+        return [py_detection(Detection.OBSTACLE, goal) for goal in goals]

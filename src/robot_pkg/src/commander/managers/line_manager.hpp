@@ -4,7 +4,7 @@
 #include "../task_manager_base.hpp"
 #include "common/common_header.hpp"
 
-const double MAX_DIST = 1;
+const double MAX_DIST = 1.6;
 
 class LineManager : public StateMachine {
   bool start();

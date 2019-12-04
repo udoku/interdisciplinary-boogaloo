@@ -48,25 +48,18 @@ class py_vision:
     def pixel_to_global(self, pixel):
         new_pixel = np.array([pixel[0], pixel[1], 1])
         cam_vec = np.matmul(np.linalg.inv(NEW_K), new_pixel)
-        print('camera vector: ' + str(cam_vec))
         cam_vec = np.matmul(_rotation_matrix(np.array([1.,0.,0.]), -math.pi/4.), cam_vec)
-        print('rotated cam vec: ' + str(cam_vec))
         if cam_vec[1] < 0:
             return np.array([69., 0.])
         local_pos = (CAM_HEIGHT/cam_vec[1]) * cam_vec
-        print('local (camera) pos: ' + str(local_pos))
         local_pos[2] += CAM_FORWARD
 
         local_x = local_pos[2]
         local_y = -local_pos[0]
-        print('local x: ' + str(local_x) + ' local y: ' + str(local_y))
-        print('rx: ' + str(self.ROBOT_STATE.pos_x) + ' ry: ' + str(self.ROBOT_STATE.pos_y) + ' rr: ' + str(self.ROBOT_STATE.yaw))
         global_pos = np.array([
             local_x * math.cos(self.ROBOT_STATE.yaw) - local_y * math.sin(self.ROBOT_STATE.yaw) + self.ROBOT_STATE.pos_x,
             local_x * math.sin(self.ROBOT_STATE.yaw) + local_y * math.cos(self.ROBOT_STATE.yaw) + self.ROBOT_STATE.pos_y
         ])
-
-        print('global (camera) pos: ' + str(global_pos))
 
         return global_pos
 
