@@ -14,6 +14,7 @@ current_state = None
 cap = None
 bridge = None
 camera_pub = None
+raw_cam_pub = None
 
 CAMERA_IMAGES_TOPIC = "images/camera"
 ROBOT_STATE_TOPIC = "robot_state"
@@ -30,6 +31,7 @@ def main():
     global bridge
     global cap
     global camera_pub
+    global raw_cam_pub
     global CAMERA_IMAGES_TOPIC
     global ROBOT_STATE_TOPIC
 
@@ -55,6 +57,7 @@ def main():
     camera_timer = rospy.Timer(rospy.Duration(1.0/30.0), publish_camera)
     camera_pub = rospy.Publisher(CAMERA_IMAGES_TOPIC, Frame)
     state_sub = rospy.Subscriber(ROBOT_STATE_TOPIC, RobotState, handle_new_state, queue_size=1)
+    raw_cam_pub = rospy.Publisher('images/raw_camera', Image)
 
     print('Camera process initialized')
 
@@ -75,6 +78,7 @@ def publish_camera(time):
     global current_state
     global cap
     global camera_pub
+    global raw_cam_pub
     global bridge
 
     if (current_state == None):
@@ -82,6 +86,10 @@ def publish_camera(time):
         return
 
     _, img = cap.read()
+
+    raw_frame = bridge.cv2_to_imgmsg(undistort(img), 'bgr8')
+    raw_cam_pub.publish(raw_frame)
+
     new_frame = Frame()
     new_frame.state = current_state
     new_frame.image = bridge.cv2_to_imgmsg(undistort(img), 'bgr8')

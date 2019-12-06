@@ -16,5 +16,8 @@ bool DemoManager::printMessage(int n_times) {
         ROS_INFO("%s", message_.c_str());
     }
     ros::Duration(20).sleep();
-    return done(true);
+    Vision::setDetector(robot_pkg::Detector::LINE_DETECTOR);
+    ros::Duration(20).sleep();
+    Vision::setDetector(robot_pkg::Detector::OBSTACLE_DETECTOR);
+    return call(bind(&DemoManager::printMessage, this, 1));
 }
